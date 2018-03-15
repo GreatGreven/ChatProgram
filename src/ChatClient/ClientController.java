@@ -75,7 +75,11 @@ public class ClientController {
 	}
 	
 	protected UserList getContacts(){
-		return this.contacts;
+		return contacts;
+	}
+	
+	protected UserList getAllUsers(){
+		return allUsers;
 	}
 
 	protected void login(){
