@@ -101,14 +101,14 @@ public class ClientController {
 		} else {
 			 image = new ImageIcon(messageUI.getImagePath());
 		}
-		UserList receivers = allUsers; // new UserList();
-//		ArrayList<String> usernames = messageUI.getReceivers();
-//		for (int i = 0 ; i < usernames.size();i++){
-//			if (allUsers.exist(usernames.get(i))){
-//				int allUserIndex = allUsers.indexOf(usernames.get(i));
-//				receivers.addUser(allUsers.getUser(allUserIndex));
-//			}
-//		}
+		UserList receivers = new UserList();
+		ArrayList<String> usernames = messageUI.getReceivers();
+		for (int i = 0 ; i < usernames.size();i++){
+			if (allUsers.exist(usernames.get(i))){
+				int allUserIndex = allUsers.indexOf(usernames.get(i));
+				receivers.addUser(allUsers.getUser(allUserIndex));
+			}
+		}
 		Message message = new Message(user,receivers,text,image);
 		chatClient.send(message);
 	}

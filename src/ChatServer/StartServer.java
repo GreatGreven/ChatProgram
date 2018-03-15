@@ -7,7 +7,7 @@ public class StartServer {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new ServerController(3300, 1);
+					new ServerController(3300, 10);
 				} catch (Exception e) {
 					System.out.println("Program: " + e);
 				}

@@ -14,7 +14,7 @@ public class ChatServer {
 	private ClientListener listener;
 	private HashMap<String, ClientHandler> clientHandlers;
 	private UnsentMessages unsentMessages;
-	// private RunOnThreadN pool;
+	private RunOnThreadN pool;
 	private Thread connection;
 	private int requestPort;
 
@@ -22,7 +22,7 @@ public class ChatServer {
 		this.listener = listener;
 		this.unsentMessages = new UnsentMessages();
 		this.clientHandlers = new HashMap<String, ClientHandler>();
-		// this.pool = new RunOnThreadN(nbrOfThreads);
+		this.pool = new RunOnThreadN(nbrOfThreads);
 		this.requestPort = requestPort;
 		this.ui = ui;
 	}
@@ -32,7 +32,7 @@ public class ChatServer {
 			serverSocket = new ServerSocket(requestPort);
 			connection = new TCPListener();
 			connection.start();
-			// pool.start();
+			pool.start();
 			ui.println("Starting Server: " + serverSocket.getInetAddress().getHostAddress() + ":"
 					+ serverSocket.getLocalPort());
 		} catch (IOException e) {
@@ -44,7 +44,7 @@ public class ChatServer {
 		try {
 			connection.interrupt();
 			serverSocket.close();
-//			pool.stop();
+			pool.stop();
 			clientHandlers.clear();
 			ui.println("Server closing");
 		} catch (IOException e) {
@@ -54,7 +54,7 @@ public class ChatServer {
 
 	protected void respond(Message message) {
 		UserList list = message.getReceivers();
-		// list.addUser(message.getSender());
+		list.addUser(message.getSender());
 		for (int i = 0; i < list.numberOfUsers(); i++) {
 			clientHandlers.get(list.getUser(i)).send(message);
 		}
@@ -62,14 +62,11 @@ public class ChatServer {
 
 	protected void respond(UserList listToSend) {
 		for (int i = 0; i < listToSend.numberOfUsers(); i++) {
-//			if (listToSend.getUser(i).isConnected()) {
-
 				clientHandlers.get(listToSend.getUser(i).getName()).send(listToSend);
-//			}
 		}
 	}
 	
-	public UserList getAllUsers() {
+	protected UserList getAllUsers() {
 		UserList allUsers = new UserList();
 		Iterator<String> iter = clientHandlers.keySet().iterator();
 		while(iter.hasNext()) {
@@ -83,7 +80,7 @@ public class ChatServer {
 			while (!Thread.interrupted()) {
 				try {
 					Socket socket = serverSocket.accept();
-					new ClientHandler(socket).start();
+					pool.execute(new ClientHandler(socket));
 					
 				} catch (IOException e) {
 				}
@@ -91,7 +88,7 @@ public class ChatServer {
 		}
 	}
 
-	private class ClientHandler extends Thread {
+	private class ClientHandler implements Runnable {
 		private Socket socket;
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;
@@ -105,10 +102,6 @@ public class ChatServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-
-		public User getUser() {
-			return this.user;
 		}
 
 		public void send(UserList users) {
@@ -140,7 +133,6 @@ public class ChatServer {
 
 		public void denial() {
 			try {
-
 				oos.writeObject(null);
 				oos.flush();
 				socket.close();

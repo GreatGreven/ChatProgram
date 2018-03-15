@@ -9,13 +9,11 @@ import resouces.*;
 public class ServerController {
 	private ChatServer chatServer;
 	private ServerUI ui;
-//	private UserList allUsers;
 	
 	public ServerController(int requestPort, int nbrOfThreads) {
 		ui = new ServerUI(this);
 		showServerUI();
 		chatServer = new ChatServer(requestPort, nbrOfThreads, new ClientResponse(), ui);
-//		allUsers = new UserList();
 	}
 	
 	private void showServerUI(){
@@ -56,10 +54,4 @@ public class ServerController {
 			user.setConnected(false);
 		}
 	}
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
