@@ -15,7 +15,6 @@ public class ChatServer {
 	private ClientListener listener;
 	private HashMap<String, ClientHandler> clientHandlers;
 	private UnsentMessages unsentMessages;
-	private RunOnThreadN pool;
 	private Thread connection;
 	private int requestPort;
 	private LinkedList<ClientHandler> clientHandlerList = new LinkedList<ClientHandler>();
@@ -24,7 +23,6 @@ public class ChatServer {
 		this.listener = listener;
 		this.unsentMessages = new UnsentMessages();
 		this.clientHandlers = new HashMap<String, ClientHandler>();
-		this.pool = new RunOnThreadN(nbrOfThreads);
 		this.requestPort = requestPort;
 		this.ui = ui;
 	}
@@ -34,7 +32,6 @@ public class ChatServer {
 			serverSocket = new ServerSocket(requestPort);
 			connection = new TCPListener();
 			connection.start();
-//			pool.start();
 			ui.println("Starting Server: " + serverSocket.getInetAddress().getHostAddress() + ":"
 					+ serverSocket.getLocalPort());
 		} catch (IOException e) {
@@ -46,7 +43,6 @@ public class ChatServer {
 		try {
 			connection.interrupt();
 			serverSocket.close();
-			pool.stop();
 			clientHandlers.clear();
 			ui.println("Server closing");
 		} catch (IOException e) {
@@ -82,7 +78,7 @@ public class ChatServer {
 			while (!Thread.interrupted()) {
 				try {
 					Socket socket = serverSocket.accept();
-//					pool.execute(new ClientHandler(socket));
+					
 					clientHandlerList.add(new ClientHandler(socket));
 					clientHandlerList.getLast().start();
 					
@@ -162,12 +158,10 @@ public class ChatServer {
 							this.user.setConnected(true);
 							ui.println(this.user.getName() + " has connected (" + toString() + ")");
 							clientHandlers.put(this.user.getName(), this);
-							// pool.execute(this);
 							listener.receive(this.user);
 						}
 					} else if (request instanceof Message) {
 						Message message = (Message) request;
-						// pool.execute(this);
 						listener.receive(message);
 					}
 				} catch (SocketException e) {
