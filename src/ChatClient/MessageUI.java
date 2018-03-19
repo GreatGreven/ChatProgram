@@ -28,7 +28,10 @@ public class MessageUI extends JPanel {
 	private File file;
 	private ArrayList<JCheckBox> checkBoxes = new ArrayList<JCheckBox>();
 	private ArrayList<JButton> receivers = new ArrayList<JButton>();
+	private ArrayList<JCheckBox> checkBoxesAll = new ArrayList<JCheckBox>();
+	private ArrayList<JButton> receiversAll = new ArrayList<JButton>();
 
+	
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
 		Dimension windowSize = new Dimension(500, 500);
@@ -37,6 +40,7 @@ public class MessageUI extends JPanel {
 		pnlWrite = writePanel();
 		pnlRead = readPanel();
 		scrollContactPane = new JScrollPane(contactPanel());
+		scrollContactPane.setPreferredSize(new Dimension(150, 2));
 		this.add(pnlRead, BorderLayout.CENTER);
 		this.add(pnlWrite, BorderLayout.SOUTH);
 		this.add(scrollContactPane, BorderLayout.EAST);
@@ -71,19 +75,26 @@ public class MessageUI extends JPanel {
 	}
 
 	private JPanel contactPanel(){
+		populateContactList();
+		populateAllUsersList();
+
 		JPanel panel = new JPanel(new BorderLayout());
+		panel.setPreferredSize(new Dimension(100, 0));
 		btnAddContact = new JButton("+ Add Contact");
 		btnAddContact.addActionListener(new Listener());
-		JPanel pnlUsers = new JPanel(new GridLayout(100,2));
-		populateContactList();
+		int rows = checkBoxes.size();
+		JPanel pnlUsers = new JPanel(new GridLayout(rows+2,2));
 		pnlUsers.add(new JLabel("Contacts"));
+		pnlUsers.add(new JPanel());
+		int index = 0;
 		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
 			pnlUsers.add(checkBoxes.get(i));
 			pnlUsers.add(receivers.get(i));
+			index++;
 		}
-		populateAllUsersList();
 		pnlUsers.add(new JLabel("Online"));
-		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
+		pnlUsers.add(new JLabel());
+		for(int i = index; i < checkBoxes.size() || i < receivers.size();i++){
 			pnlUsers.add(checkBoxes.get(i));
 			pnlUsers.add(receivers.get(i));
 		}
@@ -114,6 +125,7 @@ public class MessageUI extends JPanel {
 
 	private void populateContactList() {
 		UserList list = controller.getContacts();
+		UserList allUsers = controller.getAllUsers(); 
 		for (int i = 0; i < list.numberOfUsers(); i++) {
 			checkBoxes.add(new JCheckBox());
 			receivers.add(new JButton());
@@ -126,11 +138,11 @@ public class MessageUI extends JPanel {
 	private void populateAllUsersList() {
 		UserList list = controller.getAllUsers();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			checkBoxes.add(new JCheckBox());
-			receivers.add(new JButton());
-			receivers.get(i).setIcon(list.getUser(i).getPicture());
-			receivers.get(i).setToolTipText(list.getUser(i).getName());
-			receivers.get(i).addActionListener(new Listener());
+			checkBoxesAll.add(new JCheckBox());
+			receiversAll.add(new JButton());
+			receiversAll.get(i).setIcon(list.getUser(i).getPicture());
+			receiversAll.get(i).setToolTipText(list.getUser(i).getName());
+			receiversAll.get(i).addActionListener(new Listener());
 		}
 	}
 

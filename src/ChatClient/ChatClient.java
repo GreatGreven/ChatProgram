@@ -64,7 +64,7 @@ public class ChatClient {
 					}
 				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, "TCPLISTENER, CHATCLIENT \n" + e.getMessage());
+					JOptionPane.showMessageDialog(null, "TCPLISTENER interrupted" + e.getMessage());
 					try {
 						socket.close();
 					} catch (IOException e1) {

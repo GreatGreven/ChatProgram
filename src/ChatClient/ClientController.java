@@ -27,7 +27,6 @@ public class ClientController {
 		contacts = new UserList();
 		allUsers = new UserList();
 		loginUI = new LoginUI(this);
-		messageUI = new MessageUI(this);
 
 		showLoginUI();
 	}
@@ -61,7 +60,6 @@ public class ClientController {
 			try {
 				contacts = (UserList) ois.readObject();
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
 		} catch (IOException e) {
 		}
@@ -141,18 +139,21 @@ public class ClientController {
 		}
 
 		public void receive(UserList userList) {
-			ClientController.this.allUsers = userList;
 			readContacts();
+			allUsers = userList;
 			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
 					if (contacts.exist(allUsers.getUser(i).getName())){
 						allUsers.removeUser(allUsers.getUser(i));
 					}
 			}
 			if (user.isConnected()) {
-				messageUI.revalidate();
+				UI.dispose();
+				messageUI.validate();
 				messageUI.repaint();
+				showMessageUI();
 			} else {
 				user.setConnected(true);
+				messageUI = new MessageUI(ClientController.this);
 				UI.dispose();
 				showMessageUI();
 			}
