@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import resources.*;
 
@@ -17,6 +18,7 @@ public class ChatServer {
 	private RunOnThreadN pool;
 	private Thread connection;
 	private int requestPort;
+	private LinkedList<ClientHandler> clientHandlerList = new LinkedList<ClientHandler>();
 
 	public ChatServer(int requestPort, int nbrOfThreads, ClientListener listener, ServerUI ui) {
 		this.listener = listener;
@@ -32,7 +34,7 @@ public class ChatServer {
 			serverSocket = new ServerSocket(requestPort);
 			connection = new TCPListener();
 			connection.start();
-			pool.start();
+//			pool.start();
 			ui.println("Starting Server: " + serverSocket.getInetAddress().getHostAddress() + ":"
 					+ serverSocket.getLocalPort());
 		} catch (IOException e) {
@@ -80,7 +82,9 @@ public class ChatServer {
 			while (!Thread.interrupted()) {
 				try {
 					Socket socket = serverSocket.accept();
-					pool.execute(new ClientHandler(socket));
+//					pool.execute(new ClientHandler(socket));
+					clientHandlerList.add(new ClientHandler(socket));
+					clientHandlerList.getLast().start();
 					
 				} catch (IOException e) {
 				}
@@ -88,7 +92,7 @@ public class ChatServer {
 		}
 	}
 
-	private class ClientHandler implements Runnable {
+	private class ClientHandler extends Thread {
 		private Socket socket;
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;

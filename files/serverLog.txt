@@ -46679,3 +46679,33 @@
 
 (1-2-5 11:12:13:14) Server closing
 
+(1-2-5 11:12:13:14) Starting Server: 0.0.0.0:3300
+
+(1-2-5 11:12:13:14) pelle1 has connected (127.0.0.1:60990)
+
+(1-2-5 11:12:13:14) pelle2 has connected (127.0.0.1:60993)
+
+(1-2-5 11:12:13:14) Starting Server: 0.0.0.0:3300
+
+(1-2-5 11:12:13:14) pelle1 has connected (127.0.0.1:61055)
+
+(1-2-5 11:12:13:14) pelle2 has connected (127.0.0.1:61056)
+
+(1-2-5 11:12:13:14) pelle3 has connected (127.0.0.1:61059)
+
+(1-2-5 11:12:13:14) (resources.Message@6e6f4670) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@5c0bdc79) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@2c205238) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@120765ca) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@2ea58354) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@8f13737) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@71e43ef8) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
+(1-2-5 11:12:13:14) (resources.Message@16e17717) Sender: pelle2 Receivers:  Text: hej Image: null Delivered: null Received: null
+
