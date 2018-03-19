@@ -1,4 +1,4 @@
-package resauces;
+package resources;
 
 import java.util.LinkedList;
 

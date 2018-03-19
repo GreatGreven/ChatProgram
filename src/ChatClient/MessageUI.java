@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import resauces.*;
+import resources.*;
 
 public class MessageUI extends JPanel {
 	private ClientController controller;

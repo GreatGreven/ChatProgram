@@ -2,7 +2,7 @@ package ChatServer;
 
 import java.util.ArrayList;
 
-import resauces.Buffer;
+import resources.Buffer;
 
 public class RunOnThreadN {
 	private Buffer<Runnable> tasks = new Buffer<Runnable>();

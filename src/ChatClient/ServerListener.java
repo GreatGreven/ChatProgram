@@ -1,6 +1,6 @@
 package ChatClient;
 
-import resauces.*;
+import resources.*;
 
 public interface ServerListener {
 public void receive(Message message);
