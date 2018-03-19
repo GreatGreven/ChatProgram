@@ -10,6 +10,7 @@ public class Message implements Serializable{
 	private UserList receivers;
 	private String text;
 	private ImageIcon image;
+	private Date date = new Date();
 	private Date delivered;
 	private Date received;
 
