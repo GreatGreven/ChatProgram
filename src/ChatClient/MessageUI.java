@@ -28,10 +28,10 @@ public class MessageUI extends JPanel {
 	private File file;
 	private ArrayList<JCheckBox> checkBoxes = new ArrayList<JCheckBox>();
 	private ArrayList<JButton> receivers = new ArrayList<JButton>();
-	
+
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
-		Dimension windowSize = new Dimension(500,500);
+		Dimension windowSize = new Dimension(500, 500);
 		this.setPreferredSize(windowSize);
 		this.setLayout(new BorderLayout());
 		pnlWrite = writePanel();
@@ -40,27 +40,28 @@ public class MessageUI extends JPanel {
 		this.add(pnlRead, BorderLayout.CENTER);
 		this.add(pnlWrite, BorderLayout.SOUTH);
 		this.add(scrollContactPane, BorderLayout.EAST);
-		
+
 		Boolean editable = true;
 		taRead.setEditable(!editable);
 		taWrite.setEditable(editable);
 		initializeListeners();
-		
+
 	}
-	private JPanel writePanel(){
+
+	private JPanel writePanel() {
 		taWrite = new JTextArea();
 		btnSend = new JButton("Send");
-		JPanel panel = new JPanel();		
+		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setPreferredSize(new Dimension(10, 100));
 		panel.add(writeImagePanel(), BorderLayout.NORTH);
 		panel.add(taWrite, BorderLayout.CENTER);
 		panel.add(btnSend, BorderLayout.EAST);
-		
+
 		return panel;
 	}
-	
-	private JPanel readPanel(){
+
+	private JPanel readPanel() {
 		taRead = new JTextArea();
 		scrollReadPane = new JScrollPane(taRead);
 		JPanel panel = new JPanel();
@@ -68,14 +69,21 @@ public class MessageUI extends JPanel {
 		panel.add(scrollReadPane);
 		return panel;
 	}
-	
+
 	private JPanel contactPanel(){
-		populateContactList();
 		JPanel panel = new JPanel(new BorderLayout());
 		btnAddContact = new JButton("+ Add Contact");
 		btnAddContact.addActionListener(new Listener());
 		JPanel pnlUsers = new JPanel(new GridLayout(100,2));
-		for(int i=0;i<checkBoxes.size();i++){
+		populateContactList();
+		pnlUsers.add(new JLabel("Contacts"));
+		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
+			pnlUsers.add(checkBoxes.get(i));
+			pnlUsers.add(receivers.get(i));
+		}
+		populateAllUsersList();
+		pnlUsers.add(new JLabel("Online"));
+		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
 			pnlUsers.add(checkBoxes.get(i));
 			pnlUsers.add(receivers.get(i));
 		}
@@ -83,14 +91,13 @@ public class MessageUI extends JPanel {
 		panel.add(btnAddContact,BorderLayout.NORTH);
 		return panel;
 	}
-		
-	private JPanel writeImagePanel(){
+
+	private JPanel writeImagePanel() {
 		lblImageFile = new JLabel("");
 		btnImage = new JButton("Choose image");
 		fc = new JFileChooser();
 		fc.setDialogTitle("Image chooser");
-		FileFilter imageFilter = new FileNameExtensionFilter(
-			    "Image files", ImageIO.getReaderFileSuffixes());
+		FileFilter imageFilter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
 		fc.addChoosableFileFilter(imageFilter);
 		fc.setAcceptAllFileFilterUsed(false);
 		JPanel panel = new JPanel(new BorderLayout());
@@ -98,16 +105,16 @@ public class MessageUI extends JPanel {
 		panel.add(lblImageFile, BorderLayout.CENTER);
 		return panel;
 	}
-	
-	private void initializeListeners(){
+
+	private void initializeListeners() {
 		Listener l = new Listener();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
 	}
-	
-	private void populateContactList(){
+
+	private void populateContactList() {
 		UserList list = controller.getContacts();
-		for (int i = 0 ; i < list.numberOfUsers();i++){
+		for (int i = 0; i < list.numberOfUsers(); i++) {
 			checkBoxes.add(new JCheckBox());
 			receivers.add(new JButton());
 			receivers.get(i).setIcon(list.getUser(i).getPicture());
@@ -115,34 +122,43 @@ public class MessageUI extends JPanel {
 			receivers.get(i).addActionListener(new Listener());
 		}
 	}
-	
-	
-	
-	protected String getText(){
+
+	private void populateAllUsersList() {
+		UserList list = controller.getAllUsers();
+		for (int i = 0; i < list.numberOfUsers(); i++) {
+			checkBoxes.add(new JCheckBox());
+			receivers.add(new JButton());
+			receivers.get(i).setIcon(list.getUser(i).getPicture());
+			receivers.get(i).setToolTipText(list.getUser(i).getName());
+			receivers.get(i).addActionListener(new Listener());
+		}
+	}
+
+	protected String getText() {
 		return taWrite.getText();
 	}
-	
-	protected String getImagePath(){
+
+	protected String getImagePath() {
 		return lblImageFile.getText();
 	}
-	
-	protected ArrayList<String> getReceivers(){
+
+	protected ArrayList<String> getReceivers() {
 		ArrayList<String> receiver = new ArrayList<String>();
-		for (int i = 0; i < checkBoxes.size();i++){
-			if (checkBoxes.get(i).isSelected()){
+		for (int i = 0; i < checkBoxes.size(); i++) {
+			if (checkBoxes.get(i).isSelected()) {
 				receiver.add(receivers.get(i).getToolTipText());
 			}
 		}
 		return receiver;
 	}
-	
-	public void addResponse(Message message){
+
+	public void addResponse(Message message) {
 		String content = taRead.getText();
 		String append = message.getText();
 		this.taRead.setText(content + "\n" + append);
 		ImageIcon image = message.getImage();
-		if (image != null){
-			SwingUtilities.invokeLater(new Runnable(){
+		if (image != null) {
+			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JFrame iconFrame = new JFrame("Image");
 					iconFrame.getContentPane().add(new JLabel(image));
@@ -150,52 +166,52 @@ public class MessageUI extends JPanel {
 			});
 		}
 	}
-	
-	private class Listener implements ActionListener, KeyListener{
+
+	private class Listener implements ActionListener, KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent k) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void keyReleased(KeyEvent k) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void keyTyped(KeyEvent k) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent a) {
-			if (a.getSource()==btnImage){
+			if (a.getSource() == btnImage) {
 				int fileValue = fc.showSaveDialog(null);
-				if (fileValue == JFileChooser.APPROVE_OPTION){
+				if (fileValue == JFileChooser.APPROVE_OPTION) {
 					file = fc.getSelectedFile();
 					lblImageFile.setText(file.getPath());
 				}
 			}
-			if (a.getSource()==btnSend){
+			if (a.getSource() == btnSend) {
 				controller.send();
 			}
-			if (a.getSource()==btnAddContact){
+			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
 				scrollContactPane.revalidate();
 				scrollContactPane.repaint();
-				
+
 			}
-			for (int i = 0; i < receivers.size();i++){
-				if (a.getSource()==receivers.get(i)){
+			for (int i = 0; i < receivers.size(); i++) {
+				if (a.getSource() == receivers.get(i)) {
 					checkBoxes.get(i).setSelected(true);
 				}
 			}
 		}
-		
+
 	}
 
 	public static void main(String[] args) {
