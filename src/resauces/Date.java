@@ -1,4 +1,4 @@
-package resouces;
+package resauces;
 
 import java.util.Calendar;
 

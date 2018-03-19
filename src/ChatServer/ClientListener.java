@@ -2,7 +2,7 @@ package ChatServer;
 
 import java.net.Socket;
 
-import resouces.*;
+import resauces.*;
 
 public interface ClientListener {
 public void receive(Message message);

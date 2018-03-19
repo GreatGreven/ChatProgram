@@ -4,7 +4,7 @@ package ChatServer;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import resouces.*;
+import resauces.*;
 
 public class ServerController {
 	private ChatServer chatServer;

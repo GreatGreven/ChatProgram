@@ -2,8 +2,8 @@ package ChatServer;
 
 import javax.swing.*;
 
-import resouces.Date;
-import resouces.Log;
+import resauces.Date;
+import resauces.Log;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

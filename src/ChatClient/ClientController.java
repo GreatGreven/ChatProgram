@@ -8,9 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import resouces.Message;
-import resouces.User;
-import resouces.UserList;
+import resauces.Message;
+import resauces.User;
+import resauces.UserList;
 
 public class ClientController {
 	private LoginUI loginUI;

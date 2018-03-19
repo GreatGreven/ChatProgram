@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import resouces.*;
+import resauces.*;
 
 public class ChatClient {
 	private String ip;
