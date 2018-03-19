@@ -3,9 +3,9 @@ package ChatServer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import resauces.Message;
-import resauces.MessageList;
-import resauces.User;
+import resources.Message;
+import resources.MessageList;
+import resources.User;
 
 public class UnsentMessages {
 	private HashMap<String, ArrayList<Message>> unsent = new HashMap<String, ArrayList<Message>>();

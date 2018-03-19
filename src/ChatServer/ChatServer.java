@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import resauces.*;
+import resources.*;
 
 public class ChatServer {
 	private ServerUI ui;

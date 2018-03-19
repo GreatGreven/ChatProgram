@@ -1,4 +1,4 @@
-package resauces;
+package resources;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
