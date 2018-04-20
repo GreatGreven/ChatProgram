@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 public class UserList implements Serializable { 
+	private static final long serialVersionUID = -1968868156826365885L;
 	private ArrayList<User> users;
 	
 	public UserList()  {

@@ -13,9 +13,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import resources.*;
 
 public class MessageUI extends JPanel {
+	private static final long serialVersionUID = 6091921199167131315L;
 	private ClientController controller;
 	private JPanel pnlRead;
 	private JPanel pnlWrite;
+	private JPanel pnlUsers;
 	private JTextArea taRead;
 	private JTextArea taWrite;
 	private JButton btnSend;
@@ -30,6 +32,11 @@ public class MessageUI extends JPanel {
 	private ArrayList<JButton> receivers = new ArrayList<JButton>();
 	private ArrayList<JCheckBox> checkBoxesAll = new ArrayList<JCheckBox>();
 	private ArrayList<JButton> receiversAll = new ArrayList<JButton>();
+	private JPanel pnlContacts;
+	private JPanel pnlOnline;
+	private JList<String> listContacts;
+	private JList<String> listOnline;
+	private JPanel pnlContainer;
 
 	
 	public MessageUI(ClientController cont) {
@@ -39,11 +46,11 @@ public class MessageUI extends JPanel {
 		this.setLayout(new BorderLayout());
 		pnlWrite = writePanel();
 		pnlRead = readPanel();
-		scrollContactPane = new JScrollPane(contactPanel());
-		scrollContactPane.setPreferredSize(new Dimension(150, 2));
+		pnlUsers = contactPanel();
+		pnlUsers.setPreferredSize(new Dimension(150,0));
 		this.add(pnlRead, BorderLayout.CENTER);
 		this.add(pnlWrite, BorderLayout.SOUTH);
-		this.add(scrollContactPane, BorderLayout.EAST);
+		this.add(pnlUsers, BorderLayout.EAST);
 
 		Boolean editable = true;
 		taRead.setEditable(!editable);
@@ -75,31 +82,36 @@ public class MessageUI extends JPanel {
 	}
 
 	private JPanel contactPanel(){
-		populateContactList();
-		populateAllUsersList();
-
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setPreferredSize(new Dimension(100, 0));
+		JPanel panel = new JPanel();
 		btnAddContact = new JButton("+ Add Contact");
 		btnAddContact.addActionListener(new Listener());
-		int rows = checkBoxes.size();
-		JPanel pnlUsers = new JPanel(new GridLayout(rows+2,2));
-		pnlUsers.add(new JLabel("Contacts"));
-		pnlUsers.add(new JPanel());
-		int index = 0;
-		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
-			pnlUsers.add(checkBoxes.get(i));
-			pnlUsers.add(receivers.get(i));
-			index++;
-		}
-		pnlUsers.add(new JLabel("Online"));
-		pnlUsers.add(new JLabel());
-		for(int i = index; i < checkBoxes.size() || i < receivers.size();i++){
-			pnlUsers.add(checkBoxes.get(i));
-			pnlUsers.add(receivers.get(i));
-		}
-		panel.add(pnlUsers,BorderLayout.CENTER);
-		panel.add(btnAddContact,BorderLayout.NORTH);
+		panel.setLayout(new BorderLayout(0, 0));
+		panel.add(btnAddContact, BorderLayout.NORTH);
+		
+		pnlContainer = new JPanel();
+		JScrollPane scrPnUsers = new JScrollPane(pnlContainer);
+		panel.add(scrPnUsers);
+		pnlContainer.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		pnlContacts = new JPanel();
+		pnlContainer.add(pnlContacts);
+		pnlContacts.setLayout(new BorderLayout(0, 0));
+		JLabel lblContacts = new JLabel("Contacts");
+		lblContacts.setHorizontalAlignment(SwingConstants.CENTER);
+		pnlContacts.add(lblContacts, BorderLayout.NORTH);		
+		listContacts = new JList<String>(populateContactList());
+		pnlContacts.add(listContacts, BorderLayout.CENTER);
+		
+		pnlOnline = new JPanel();
+		pnlContainer.add(pnlOnline);
+		pnlOnline.setLayout(new BorderLayout(0, 0));
+		JLabel lblOnline = new JLabel("Online");
+		pnlOnline.add(lblOnline, BorderLayout.NORTH);
+		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
+		listOnline = new JList<String>(populateOnlineList());
+		pnlOnline.add(listOnline, BorderLayout.CENTER);
+
+
 		return panel;
 	}
 
@@ -123,27 +135,22 @@ public class MessageUI extends JPanel {
 		btnImage.addActionListener(l);
 	}
 
-	private void populateContactList() {
+	private String[] populateContactList() {
 		UserList list = controller.getContacts();
-		UserList allUsers = controller.getAllUsers(); 
+		String[] dataList = new String[list.numberOfUsers()];
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			checkBoxes.add(new JCheckBox());
-			receivers.add(new JButton());
-			receivers.get(i).setIcon(list.getUser(i).getPicture());
-			receivers.get(i).setToolTipText(list.getUser(i).getName());
-			receivers.get(i).addActionListener(new Listener());
+			dataList[i] = list.getUser(i).getName();
 		}
+		return dataList;
 	}
 
-	private void populateAllUsersList() {
+	private String[] populateOnlineList() {
 		UserList list = controller.getAllUsers();
+		String[] dataList = new String[list.numberOfUsers()];
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			checkBoxesAll.add(new JCheckBox());
-			receiversAll.add(new JButton());
-			receiversAll.get(i).setIcon(list.getUser(i).getPicture());
-			receiversAll.get(i).setToolTipText(list.getUser(i).getName());
-			receiversAll.get(i).addActionListener(new Listener());
+			dataList[i] = list.getUser(i).getName();
 		}
+		return dataList;
 	}
 
 	protected String getText() {

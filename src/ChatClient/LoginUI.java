@@ -36,7 +36,7 @@ public class LoginUI extends JPanel{
 		this.setPreferredSize(windowSize);
 		this.setLayout(new BorderLayout());
 
-		fc = new JFileChooser("\\Pictures");
+		fc = new JFileChooser(new File(System.getProperty("user.home"), "Pictures"));
 		fc.setDialogTitle("Image chooser");
 		FileFilter imageFilter = new FileNameExtensionFilter(
 			    "Image files", ImageIO.getReaderFileSuffixes());
