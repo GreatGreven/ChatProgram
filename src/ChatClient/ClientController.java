@@ -75,6 +75,10 @@ public class ClientController {
 		}
 	}
 
+	protected User getThisUser(){
+		return user;
+	}
+	
 	protected UserList getContacts() {
 		return contacts;
 	}
@@ -120,7 +124,7 @@ public class ClientController {
 
 	void addContact(String contact) {
 		if (contacts.exist(contact)) {
-			JOptionPane.showMessageDialog(null, contact + " already exists");
+			JOptionPane.showMessageDialog(null, contact + " already added");
 		} else {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
@@ -149,10 +153,8 @@ public class ClientController {
 				allUsers.removeUser(user);
 			}
 			if (user.isConnected()) {
-				UI.dispose();
-				messageUI.validate();
+				messageUI.revalidate();
 				messageUI.repaint();
-				showMessageUI();
 			} else {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);

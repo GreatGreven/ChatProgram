@@ -7,6 +7,8 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -28,17 +30,15 @@ public class MessageUI extends JPanel {
 	private JScrollPane scrollContactPane;
 	private JFileChooser fc;
 	private File file;
-	private ArrayList<JCheckBox> checkBoxes = new ArrayList<JCheckBox>();
-	private ArrayList<JButton> receivers = new ArrayList<JButton>();
-	private ArrayList<JCheckBox> checkBoxesAll = new ArrayList<JCheckBox>();
-	private ArrayList<JButton> receiversAll = new ArrayList<JButton>();
 	private JPanel pnlContacts;
 	private JPanel pnlOnline;
 	private JList<String> listContacts;
 	private JList<String> listOnline;
 	private JPanel pnlContainer;
+	private ArrayList<String> receivers = new ArrayList<String>();
+	private JPanel pnlProfile;
+	private JLabel lblIcon;
 
-	
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
 		Dimension windowSize = new Dimension(500, 500);
@@ -47,7 +47,7 @@ public class MessageUI extends JPanel {
 		pnlWrite = writePanel();
 		pnlRead = readPanel();
 		pnlUsers = contactPanel();
-		pnlUsers.setPreferredSize(new Dimension(150,0));
+		pnlUsers.setPreferredSize(new Dimension(150, 0));
 		this.add(pnlRead, BorderLayout.CENTER);
 		this.add(pnlWrite, BorderLayout.SOUTH);
 		this.add(pnlUsers, BorderLayout.EAST);
@@ -81,27 +81,25 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
-	private JPanel contactPanel(){
+	private JPanel contactPanel() {
 		JPanel panel = new JPanel();
-		btnAddContact = new JButton("+ Add Contact");
-		btnAddContact.addActionListener(new Listener());
 		panel.setLayout(new BorderLayout(0, 0));
-		panel.add(btnAddContact, BorderLayout.NORTH);
-		
+
 		pnlContainer = new JPanel();
 		JScrollPane scrPnUsers = new JScrollPane(pnlContainer);
 		panel.add(scrPnUsers);
 		pnlContainer.setLayout(new GridLayout(0, 1, 0, 0));
-		
+
 		pnlContacts = new JPanel();
 		pnlContainer.add(pnlContacts);
 		pnlContacts.setLayout(new BorderLayout(0, 0));
 		JLabel lblContacts = new JLabel("Contacts");
 		lblContacts.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlContacts.add(lblContacts, BorderLayout.NORTH);		
+		pnlContacts.add(lblContacts, BorderLayout.NORTH);
 		listContacts = new JList<String>(populateContactList());
+//		listContacts = new JList<String>();
 		pnlContacts.add(listContacts, BorderLayout.CENTER);
-		
+
 		pnlOnline = new JPanel();
 		pnlContainer.add(pnlOnline);
 		pnlOnline.setLayout(new BorderLayout(0, 0));
@@ -109,8 +107,20 @@ public class MessageUI extends JPanel {
 		pnlOnline.add(lblOnline, BorderLayout.NORTH);
 		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
 		listOnline = new JList<String>(populateOnlineList());
+//		listOnline = new JList<String>();
 		pnlOnline.add(listOnline, BorderLayout.CENTER);
-
+		
+		pnlProfile = new JPanel();
+		panel.add(pnlProfile, BorderLayout.NORTH);
+		pnlProfile.setLayout(new BorderLayout(0, 0));
+		btnAddContact = new JButton("+ Add Contact");
+		pnlProfile.add(btnAddContact, BorderLayout.SOUTH);
+		
+		lblIcon = new JLabel();
+		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
+		lblIcon.setIcon(controller.getThisUser().getPicture());
+		lblIcon.setMaximumSize(new Dimension(100,100));
+		pnlProfile.add(lblIcon, BorderLayout.CENTER);
 
 		return panel;
 	}
@@ -133,6 +143,10 @@ public class MessageUI extends JPanel {
 		Listener l = new Listener();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
+		listOnline.addMouseListener(l);
+		listContacts.addMouseListener(l);
+		btnAddContact.addActionListener(l);
+
 	}
 
 	private String[] populateContactList() {
@@ -162,13 +176,7 @@ public class MessageUI extends JPanel {
 	}
 
 	protected ArrayList<String> getReceivers() {
-		ArrayList<String> receiver = new ArrayList<String>();
-		for (int i = 0; i < checkBoxes.size(); i++) {
-			if (checkBoxes.get(i).isSelected()) {
-				receiver.add(receivers.get(i).getToolTipText());
-			}
-		}
-		return receiver;
+		return receivers;
 	}
 
 	public void addResponse(Message message) {
@@ -186,24 +194,18 @@ public class MessageUI extends JPanel {
 		}
 	}
 
-	private class Listener implements ActionListener, KeyListener {
+	private class Listener implements ActionListener, KeyListener, MouseListener {
 
 		@Override
 		public void keyPressed(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void keyReleased(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void keyTyped(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -220,25 +222,33 @@ public class MessageUI extends JPanel {
 			}
 			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
-				scrollContactPane.revalidate();
-				scrollContactPane.repaint();
-
-			}
-			for (int i = 0; i < receivers.size(); i++) {
-				if (a.getSource() == receivers.get(i)) {
-					checkBoxes.get(i).setSelected(true);
-				}
 			}
 		}
 
-	}
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getSource() == listContacts) {
+				receivers.add(listContacts.getSelectedValue());
+			} else if (e.getSource() == listOnline) {
+				receivers.add(listOnline.getSelectedValue());
+			}
+		}
 
-	public static void main(String[] args) {
-		MessageUI ui = new MessageUI(null);
-		JFrame frame = new JFrame("Messenger");
-		frame.getContentPane().add(ui);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
 	}
 }
