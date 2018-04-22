@@ -29,8 +29,8 @@ public class MessageUI extends JPanel {
 	private File file;
 	private JPanel pnlContacts;
 	private JPanel pnlOnline;
-	private JList<String> listContacts;
-	private JList<String> listOnline;
+	protected JList<String> listContacts;
+	protected JList<String> listOnline;
 	private JPanel pnlContainer;
 	private ArrayList<String> receivers = new ArrayList<String>();
 	private JPanel pnlProfile;

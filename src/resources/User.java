@@ -10,11 +10,13 @@ public class User implements Serializable{
 	private ImageIcon picture;
 	private boolean connected;
 
+	public User(String name){
+		this.name = name;
+		this.picture = new ImageIcon("images/no_icon.png");
+	}
+	
 	public User(String name, ImageIcon pic){
 		this.name = name;
-		if (pic == null){
-			picture = new ImageIcon("images/no_icon.png");
-		}
 		this.picture = pic;
 	}
 

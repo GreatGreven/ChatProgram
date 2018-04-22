@@ -99,13 +99,13 @@ public class ClientController {
 		String iconPath = loginUI.getIconPath();
 		ImageIcon icon;
 		if (iconPath.equals("")) {
-			icon = null;
+			this.user = new User(name);
 		} else {
 			icon = new ImageIcon(loginUI.getIconPath());
+			this.user = new User(name, icon);
+
 		}
-		User user = new User(name, icon);
 		chatClient.login(user);
-		this.user = user;
 	}
 
 	protected void send() {
@@ -160,8 +160,8 @@ public class ClientController {
 				allUsers.removeUser(user);
 			}
 			if (user.isConnected()) {
-				messageUI.revalidate();
-				messageUI.repaint();
+				messageUI.listOnline.revalidate();
+				messageUI.listOnline.repaint();
 			} else {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);
