@@ -1,5 +1,7 @@
 package ChatClient;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -51,6 +53,11 @@ public class ClientController {
 				UI.setVisible(true);
 				UI.add(messageUI);
 				UI.pack();
+				UI.addWindowListener(new WindowAdapter(){
+					public void windowClosing(WindowEvent arg0){
+						writeContacts();
+					}
+				});
 			}
 		});
 	}

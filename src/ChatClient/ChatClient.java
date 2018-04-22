@@ -2,10 +2,7 @@ package ChatClient;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 import resources.*;
 
 public class ChatClient {
@@ -34,7 +31,6 @@ public class ChatClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Can not connect to server \n" + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 
@@ -49,7 +45,7 @@ public class ChatClient {
 
 	private class TCPListener extends Thread {
 		public void run() {
-			while (!Thread.interrupted()) {
+			while (!socket.isClosed()) {
 				try {
 					Object response = ois.readObject();
 					System.out.println(response);
@@ -69,7 +65,6 @@ public class ChatClient {
 						socket.close();
 					} catch (IOException e1) {
 					}
-					Thread.currentThread().interrupt();;
 				}
 			}
 		}

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import resources.Message;
-import resources.MessageList;
-import resources.User;
 
 public class UnsentMessages {
-	private HashMap<String, ArrayList<Message>> unsent = new HashMap<String, ArrayList<Message>>();
+	private HashMap<String, ArrayList<Message>> unsent;
 
 	public UnsentMessages() {
-		// TODO Auto-generated constructor stub
+		unsent = new HashMap<String, ArrayList<Message>>();
 	}
 	
 	public synchronized void put(String user, ArrayList<Message> newList){

@@ -4,11 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -86,8 +83,8 @@ public class MessageUI extends JPanel {
 		panel.setLayout(new BorderLayout(0, 0));
 
 		pnlContainer = new JPanel();
-		JScrollPane scrPnUsers = new JScrollPane(pnlContainer);
-		panel.add(scrPnUsers);
+		scrollContactPane = new JScrollPane(pnlContainer);
+		panel.add(scrollContactPane);
 		pnlContainer.setLayout(new GridLayout(0, 1, 0, 0));
 
 		pnlContacts = new JPanel();
@@ -128,7 +125,7 @@ public class MessageUI extends JPanel {
 	private JPanel writeImagePanel() {
 		lblImageFile = new JLabel("");
 		btnImage = new JButton("Choose image");
-		fc = new JFileChooser();
+		fc = new JFileChooser(new File(System.getProperty("user.home"), "Pictures"));
 		fc.setDialogTitle("Image chooser");
 		FileFilter imageFilter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
 		fc.addChoosableFileFilter(imageFilter);

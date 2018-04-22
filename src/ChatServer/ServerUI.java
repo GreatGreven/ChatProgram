@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class ServerUI extends JPanel {
+	private static final long serialVersionUID = -2041693529144462758L;
 	private ServerController controller;
 	private static JTextArea textArea;
 	private static JScrollPane sp;
@@ -24,7 +25,7 @@ public class ServerUI extends JPanel {
 	private JButton btnStop;
 	private JButton btnLog;
 	private Log log;
-	String fileName = "files/serverLog.txt";
+	private final String fileName = "files/serverLog.txt";
 
 	public ServerUI(ServerController controller) {
 		this.controller = controller;
