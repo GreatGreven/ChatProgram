@@ -28,13 +28,15 @@ public class MessageUI extends JPanel {
 	private JFileChooser fc;
 	private File file;
 	private JPanel pnlContacts;
-	private JPanel pnlOnline;
+	protected JPanel pnlOnline;
 	protected JList<String> listContacts;
 	protected JList<String> listOnline;
 	private JPanel pnlContainer;
 	private ArrayList<String> receivers = new ArrayList<String>();
 	private JPanel pnlProfile;
 	private JLabel lblIcon;
+//Model till JList för att kunna adda elements i efterhand.
+	DefaultListModel<String> model = new DefaultListModel<>();
 
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
@@ -94,7 +96,7 @@ public class MessageUI extends JPanel {
 		lblContacts.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContacts.add(lblContacts, BorderLayout.NORTH);
 		listContacts = new JList<String>(populateContactList());
-//		listContacts = new JList<String>();
+		// listContacts = new JList<String>();
 		pnlContacts.add(listContacts, BorderLayout.CENTER);
 
 		pnlOnline = new JPanel();
@@ -103,20 +105,23 @@ public class MessageUI extends JPanel {
 		JLabel lblOnline = new JLabel("Online");
 		pnlOnline.add(lblOnline, BorderLayout.NORTH);
 		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
-		listOnline = new JList<String>(populateOnlineList());
-//		listOnline = new JList<String>();
+		//2 NYA RADER
+		listOnline = new JList<>(model);
+		populateOnlineList2();
+		// listOnline = new JList<String>(populateOnlineList());
+		// listOnline = new JList<String>();
 		pnlOnline.add(listOnline, BorderLayout.CENTER);
-		
+
 		pnlProfile = new JPanel();
 		panel.add(pnlProfile, BorderLayout.NORTH);
 		pnlProfile.setLayout(new BorderLayout(0, 0));
 		btnAddContact = new JButton("+ Add Contact");
 		pnlProfile.add(btnAddContact, BorderLayout.SOUTH);
-		
+
 		lblIcon = new JLabel();
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIcon.setIcon(controller.getThisUser().getPicture());
-		lblIcon.setMaximumSize(new Dimension(100,100));
+		lblIcon.setMaximumSize(new Dimension(100, 100));
 		pnlProfile.add(lblIcon, BorderLayout.CENTER);
 
 		return panel;
@@ -154,8 +159,24 @@ public class MessageUI extends JPanel {
 		}
 		return dataList;
 	}
+// NY METOD
+	private void populateContactList2() {
+		UserList list = controller.getContacts();
+		for (int i = 0; i < list.numberOfUsers(); i++) {
+			model.addElement(list.getUser(i).getName());
+		}
+	}
+	// NY METOD
+	public void populateOnlineList2() {
+		UserList list = controller.getAllUsers();
+		for (int i = 0; i < list.numberOfUsers(); i++) {
+			if (!model.contains(list.getUser(i).getName())) {
+				model.addElement(list.getUser(i).getName());
+			}
+		}
+	}
 
-	private String[] populateOnlineList() {
+	public String[] populateOnlineList() {
 		UserList list = controller.getAllUsers();
 		String[] dataList = new String[list.numberOfUsers()];
 		for (int i = 0; i < list.numberOfUsers(); i++) {

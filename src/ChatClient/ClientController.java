@@ -1,5 +1,6 @@
 package ChatClient;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -160,8 +161,11 @@ public class ClientController {
 				allUsers.removeUser(user);
 			}
 			if (user.isConnected()) {
+				//NY RAD
+				messageUI.populateOnlineList2();
 				messageUI.listOnline.revalidate();
 				messageUI.listOnline.repaint();
+				
 			} else {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);
