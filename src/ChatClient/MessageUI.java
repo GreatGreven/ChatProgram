@@ -159,13 +159,7 @@ public class MessageUI extends JPanel {
 		}
 		return dataList;
 	}
-// NY METOD
-	private void populateContactList2() {
-		UserList list = controller.getContacts();
-		for (int i = 0; i < list.numberOfUsers(); i++) {
-			model.addElement(list.getUser(i).getName());
-		}
-	}
+		
 	// NY METOD
 	public void populateOnlineList2() {
 		UserList list = controller.getAllUsers();

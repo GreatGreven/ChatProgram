@@ -161,7 +161,7 @@ public class ClientController {
 				allUsers.removeUser(user);
 			}
 			if (user.isConnected()) {
-				//NY RAD
+				// 1 NY RAD
 				messageUI.populateOnlineList2();
 				messageUI.listOnline.revalidate();
 				messageUI.listOnline.repaint();
