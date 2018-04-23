@@ -13,11 +13,11 @@ import resources.User;
 import resources.UserList;
 
 /**
- * Class that creates a client for the program  
- * @author 
+ * Class that creates a client for the program and controls it.
+ * 
+ * @author
  *
  */
-
 public class ClientController {
 	private LoginUI loginUI;
 	private MessageUI messageUI;
@@ -28,15 +28,15 @@ public class ClientController {
 	private UserList contacts;
 	private final String filename = "files/localContacts.dat";
 
-	
 	/**
 	 * Constructor that opens to the server
-	 *  
-	 * @param ip String with the ip-address to the selected server
 	 * 
-	 * @param ServerPort Port number the server is listening at.
+	 * @param ip
+	 *            String with the ip-address to the selected server
+	 * 
+	 * @param ServerPort
+	 *            Port number the server is listening at.
 	 */
-	
 	protected ClientController(String ip, int serverPort) {
 		chatClient = new ChatClient(ip, serverPort, new ServerResponse());
 		contacts = new UserList();
@@ -49,7 +49,6 @@ public class ClientController {
 	/**
 	 * Method that show the LogIn screen.
 	 */
-	
 	private void showLoginUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -63,9 +62,8 @@ public class ClientController {
 	}
 
 	/**
-	 * Method that show the Message screen. 
+	 * Method that show the Message screen.
 	 */
-	
 	private void showMessageUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -74,8 +72,8 @@ public class ClientController {
 				UI.setVisible(true);
 				UI.add(messageUI);
 				UI.pack();
-				UI.addWindowListener(new WindowAdapter(){
-					public void windowClosing(WindowEvent arg0){
+				UI.addWindowListener(new WindowAdapter() {
+					public void windowClosing(WindowEvent arg0) {
 						writeContacts();
 					}
 				});
@@ -84,9 +82,8 @@ public class ClientController {
 	}
 
 	/**
-	 * Method that reads the Userlist 
+	 * Method that reads the UserList from the file.
 	 */
-	
 	private void readContacts() {
 		try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
 			try {
@@ -98,9 +95,8 @@ public class ClientController {
 	}
 
 	/**
-	 * Method that writes the contacts     
+	 * Method that writes the contacts to a file.
 	 */
-	
 	private void writeContacts() {
 		try (ObjectOutputStream oos = new ObjectOutputStream(
 				new BufferedOutputStream(new FileOutputStream(filename)))) {
@@ -111,10 +107,10 @@ public class ClientController {
 		}
 	}
 
-	protected User getThisUser(){
+	protected User getThisUser() {
 		return user;
 	}
-	
+
 	protected UserList getContacts() {
 		return contacts;
 	}
@@ -138,9 +134,8 @@ public class ClientController {
 	}
 
 	/**
-	 *  Method that sends the message 
+	 * Method that sends the message
 	 */
-	
 	protected void send() {
 		String text = messageUI.getText();
 		String iconPath = loginUI.getIconPath();
@@ -169,24 +164,25 @@ public class ClientController {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
 				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
-				
+
 				JOptionPane.showMessageDialog(null, contact + " added");
 			} else {
 				JOptionPane.showMessageDialog(null, contact + " doesn't exists");
 			}
 		}
-		
+		messageUI.populateContactList();
+		messageUI.populateOnlineList();
 		messageUI.revalidate();
 		messageUI.repaint();
 	}
-	
+
 	/**
-	 * Inner class that implements a serverlistener that waits to recieve an message.
+	 * Inner class that implements a serverlistener that waits to recieve an
+	 * message.
 	 * 
-	 * @author 
+	 * @author
 	 *
 	 */
-
 	private class ServerResponse implements ServerListener {
 		public void receive(Message message) {
 			messageUI.addResponse(message);
@@ -195,18 +191,18 @@ public class ClientController {
 		public void receive(UserList userList) {
 			allUsers = userList;
 			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
-					if (contacts.exist(allUsers.getUser(i).getName())){
-						allUsers.removeUser(allUsers.getUser(i));
-					}
+				if (contacts.exist(allUsers.getUser(i).getName())) {
+					allUsers.removeUser(allUsers.getUser(i));
+				}
 			}
-			if (allUsers.exist(user.getName())){
+			if (allUsers.exist(user.getName())) {
 				allUsers.removeUser(user);
 			}
 			if (user.isConnected()) {
 				messageUI.populateOnlineList();
 				messageUI.revalidate();
 				messageUI.repaint();
-				
+
 			} else {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);

@@ -28,14 +28,13 @@ public class MessageUI extends JPanel {
 	private JFileChooser fc;
 	private File file;
 	private JPanel pnlContacts;
-	protected JPanel pnlOnline;
-	protected JList<String> listContacts;
-	protected JList<String> listOnline;
+	private JPanel pnlOnline;
+	private JList<String> listContacts;
+	private JList<String> listOnline;
 	private JPanel pnlContainer;
 	private ArrayList<String> receivers = new ArrayList<String>();
 	private JPanel pnlProfile;
 	private JLabel lblIcon;
-//Model till JList f�r att kunna adda elements i efterhand.
 	private DefaultListModel<String> modelOnlineList = new DefaultListModel<>();
 	private DefaultListModel<String> modelContactList = new DefaultListModel<>();
 
@@ -150,7 +149,7 @@ public class MessageUI extends JPanel {
 
 	}
 
-	private void populateContactList() {
+	protected void populateContactList() {
 		UserList list = controller.getContacts();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
 			if(!modelContactList.contains(list.getUser(i).getName())){
@@ -159,7 +158,7 @@ public class MessageUI extends JPanel {
 		}
 	}
 
-	public void populateOnlineList() {
+	protected void populateOnlineList() {
 		UserList list = controller.getAllUsers();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
 			if (!modelOnlineList.contains(list.getUser(i).getName())) {

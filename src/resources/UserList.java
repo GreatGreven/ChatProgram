@@ -20,8 +20,8 @@ public class UserList implements Serializable {
 	}
 
 	public synchronized void removeUser(User user) {
-		int index = users.indexOf(user);
-		users.remove(index + 1);
+		int index = indexOf(user.getName());
+		users.remove(index);
 	}
 
 	public synchronized UserList getUserList() {
