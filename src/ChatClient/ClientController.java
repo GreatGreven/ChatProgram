@@ -1,13 +1,13 @@
 package ChatClient;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
 import resources.Message;
 import resources.User;
 import resources.UserList;
@@ -42,7 +42,7 @@ public class ClientController {
 		contacts = new UserList();
 		allUsers = new UserList();
 		loginUI = new LoginUI(this);
-
+		readContacts();
 		showLoginUI();
 	}
 
@@ -74,6 +74,11 @@ public class ClientController {
 				UI.setVisible(true);
 				UI.add(messageUI);
 				UI.pack();
+				UI.addWindowListener(new WindowAdapter(){
+					public void windowClosing(WindowEvent arg0){
+						writeContacts();
+					}
+				});
 			}
 		});
 	}
@@ -106,6 +111,10 @@ public class ClientController {
 		}
 	}
 
+	protected User getThisUser(){
+		return user;
+	}
+	
 	protected UserList getContacts() {
 		return contacts;
 	}
@@ -119,13 +128,13 @@ public class ClientController {
 		String iconPath = loginUI.getIconPath();
 		ImageIcon icon;
 		if (iconPath.equals("")) {
-			icon = null;
+			this.user = new User(name);
 		} else {
 			icon = new ImageIcon(loginUI.getIconPath());
+			this.user = new User(name, icon);
+
 		}
-		User user = new User(name, icon);
 		chatClient.login(user);
-		this.user = user;
 	}
 
 	/**
@@ -155,7 +164,7 @@ public class ClientController {
 
 	void addContact(String contact) {
 		if (contacts.exist(contact)) {
-			JOptionPane.showMessageDialog(null, contact + " already exists");
+			JOptionPane.showMessageDialog(null, contact + " already added");
 		} else {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
@@ -181,18 +190,21 @@ public class ClientController {
 		}
 
 		public void receive(UserList userList) {
-			readContacts();
 			allUsers = userList;
 			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
 					if (contacts.exist(allUsers.getUser(i).getName())){
 						allUsers.removeUser(allUsers.getUser(i));
 					}
 			}
+			if (allUsers.exist(user.getName())){
+				allUsers.removeUser(user);
+				System.out.println("user removed");
+			}
 			if (user.isConnected()) {
-				UI.dispose();
-				messageUI.validate();
+				messageUI.populateOnlineList();
+				messageUI.revalidate();
 				messageUI.repaint();
-				showMessageUI();
+				
 			} else {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);

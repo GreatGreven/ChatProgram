@@ -1,7 +1,6 @@
 package resources;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.SwingUtilities;

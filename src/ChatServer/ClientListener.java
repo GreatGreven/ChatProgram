@@ -1,7 +1,5 @@
 package ChatServer;
 
-import java.net.Socket;
-
 import resources.*;
 
 public interface ClientListener {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 public class UserList implements Serializable { 
+	private static final long serialVersionUID = -1968868156826365885L;
 	private ArrayList<User> users;
 	
 	public UserList()  {
@@ -19,7 +20,8 @@ public class UserList implements Serializable {
 	}
 
 	public synchronized void removeUser(User user) {
-		users.remove(user);
+		int index = users.indexOf(user);
+		users.remove(index+1);
 	}
 	public synchronized UserList getUserList() {
 		return this;

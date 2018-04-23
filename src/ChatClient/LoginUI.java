@@ -2,9 +2,7 @@ package ChatClient;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.ImageFilter;
 import java.io.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -17,6 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class LoginUI extends JPanel{
+	private static final long serialVersionUID = -6025240258441519294L;
 	private ClientController controller;
 	private JPanel pnlContent = new JPanel(new GridLayout(2,1,0,0));
 	private JPanel pnlButtons = new JPanel(new GridLayout(1,2,5,0));
@@ -47,7 +46,7 @@ public class LoginUI extends JPanel{
 		this.setPreferredSize(windowSize);
 		this.setLayout(new BorderLayout());
 
-		fc = new JFileChooser("\\Pictures");
+		fc = new JFileChooser(new File(System.getProperty("user.home"), "Pictures"));
 		fc.setDialogTitle("Image chooser");
 		FileFilter imageFilter = new FileNameExtensionFilter(
 			    "Image files", ImageIO.getReaderFileSuffixes());
@@ -117,17 +116,4 @@ public class LoginUI extends JPanel{
 			}
 		}
 	}
-	
-	public static void main(String[]args){
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run() {
-				JFrame frame = new JFrame("Login");
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.setVisible(true);
-				frame.getContentPane().add(new LoginUI(new ClientController("localhost", 3300)));
-				frame.pack();
-			}
-		});
-	}
-
 }

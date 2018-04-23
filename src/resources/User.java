@@ -5,15 +5,18 @@ import java.io.Serializable;
 import javax.swing.*;
 
 public class User implements Serializable{
+	private static final long serialVersionUID = -773659708777609854L;
 	private String name;
 	private ImageIcon picture;
 	private boolean connected;
 
+	public User(String name){
+		this.name = name;
+		this.picture = new ImageIcon("images/no_icon.png");
+	}
+	
 	public User(String name, ImageIcon pic){
 		this.name = name;
-		if (pic == null){
-			picture = new ImageIcon("images/no_icon.png");
-		}
 		this.picture = pic;
 	}
 

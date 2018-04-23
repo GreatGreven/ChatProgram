@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -13,9 +12,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import resources.*;
 
 public class MessageUI extends JPanel {
+	private static final long serialVersionUID = 6091921199167131315L;
 	private ClientController controller;
 	private JPanel pnlRead;
 	private JPanel pnlWrite;
+	private JPanel pnlUsers;
 	private JTextArea taRead;
 	private JTextArea taWrite;
 	private JButton btnSend;
@@ -26,12 +27,18 @@ public class MessageUI extends JPanel {
 	private JScrollPane scrollContactPane;
 	private JFileChooser fc;
 	private File file;
-	private ArrayList<JCheckBox> checkBoxes = new ArrayList<JCheckBox>();
-	private ArrayList<JButton> receivers = new ArrayList<JButton>();
-	private ArrayList<JCheckBox> checkBoxesAll = new ArrayList<JCheckBox>();
-	private ArrayList<JButton> receiversAll = new ArrayList<JButton>();
+	private JPanel pnlContacts;
+	protected JPanel pnlOnline;
+	protected JList<String> listContacts;
+	protected JList<String> listOnline;
+	private JPanel pnlContainer;
+	private ArrayList<String> receivers = new ArrayList<String>();
+	private JPanel pnlProfile;
+	private JLabel lblIcon;
+//Model till JList f�r att kunna adda elements i efterhand.
+	private DefaultListModel<String> modelOnlineList = new DefaultListModel<>();
+	private DefaultListModel<String> modelContactList = new DefaultListModel<>();
 
-	
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
 		Dimension windowSize = new Dimension(500, 500);
@@ -39,11 +46,11 @@ public class MessageUI extends JPanel {
 		this.setLayout(new BorderLayout());
 		pnlWrite = writePanel();
 		pnlRead = readPanel();
-		scrollContactPane = new JScrollPane(contactPanel());
-		scrollContactPane.setPreferredSize(new Dimension(150, 2));
+		pnlUsers = contactPanel();
+		pnlUsers.setPreferredSize(new Dimension(150, 0));
 		this.add(pnlRead, BorderLayout.CENTER);
 		this.add(pnlWrite, BorderLayout.SOUTH);
-		this.add(scrollContactPane, BorderLayout.EAST);
+		this.add(pnlUsers, BorderLayout.EAST);
 
 		Boolean editable = true;
 		taRead.setEditable(!editable);
@@ -74,39 +81,55 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
-	private JPanel contactPanel(){
-		populateContactList();
-		populateAllUsersList();
+	private JPanel contactPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout(0, 0));
 
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setPreferredSize(new Dimension(100, 0));
+		pnlContainer = new JPanel();
+		scrollContactPane = new JScrollPane(pnlContainer);
+		panel.add(scrollContactPane);
+		pnlContainer.setLayout(new GridLayout(0, 1, 0, 0));
+
+		pnlContacts = new JPanel();
+		pnlContainer.add(pnlContacts);
+		pnlContacts.setLayout(new BorderLayout(0, 0));
+		JLabel lblContacts = new JLabel("Contacts");
+		lblContacts.setHorizontalAlignment(SwingConstants.CENTER);
+		pnlContacts.add(lblContacts, BorderLayout.NORTH);
+		listContacts = new JList<String>(modelContactList);
+		populateContactList();
+		pnlContacts.add(listContacts, BorderLayout.CENTER);
+
+		pnlOnline = new JPanel();
+		pnlContainer.add(pnlOnline);
+		pnlOnline.setLayout(new BorderLayout(0, 0));
+		JLabel lblOnline = new JLabel("Online");
+		pnlOnline.add(lblOnline, BorderLayout.NORTH);
+		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
+		//2 NYA RADER
+		listOnline = new JList<>(modelOnlineList);
+		populateOnlineList();
+		pnlOnline.add(listOnline, BorderLayout.CENTER);
+
+		pnlProfile = new JPanel();
+		panel.add(pnlProfile, BorderLayout.NORTH);
+		pnlProfile.setLayout(new BorderLayout(0, 0));
 		btnAddContact = new JButton("+ Add Contact");
-		btnAddContact.addActionListener(new Listener());
-		int rows = checkBoxes.size();
-		JPanel pnlUsers = new JPanel(new GridLayout(rows+2,2));
-		pnlUsers.add(new JLabel("Contacts"));
-		pnlUsers.add(new JPanel());
-		int index = 0;
-		for(int i = 0; i < checkBoxes.size() || i < receivers.size();i++){
-			pnlUsers.add(checkBoxes.get(i));
-			pnlUsers.add(receivers.get(i));
-			index++;
-		}
-		pnlUsers.add(new JLabel("Online"));
-		pnlUsers.add(new JLabel());
-		for(int i = index; i < checkBoxes.size() || i < receivers.size();i++){
-			pnlUsers.add(checkBoxes.get(i));
-			pnlUsers.add(receivers.get(i));
-		}
-		panel.add(pnlUsers,BorderLayout.CENTER);
-		panel.add(btnAddContact,BorderLayout.NORTH);
+		pnlProfile.add(btnAddContact, BorderLayout.SOUTH);
+
+		lblIcon = new JLabel();
+		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
+		lblIcon.setIcon(controller.getThisUser().getPicture());
+		lblIcon.setMaximumSize(new Dimension(100, 100));
+		pnlProfile.add(lblIcon, BorderLayout.CENTER);
+
 		return panel;
 	}
 
 	private JPanel writeImagePanel() {
 		lblImageFile = new JLabel("");
 		btnImage = new JButton("Choose image");
-		fc = new JFileChooser();
+		fc = new JFileChooser(new File(System.getProperty("user.home"), "Pictures"));
 		fc.setDialogTitle("Image chooser");
 		FileFilter imageFilter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
 		fc.addChoosableFileFilter(imageFilter);
@@ -121,28 +144,27 @@ public class MessageUI extends JPanel {
 		Listener l = new Listener();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
+		listOnline.addMouseListener(l);
+		listContacts.addMouseListener(l);
+		btnAddContact.addActionListener(l);
+
 	}
 
 	private void populateContactList() {
 		UserList list = controller.getContacts();
-		UserList allUsers = controller.getAllUsers(); 
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			checkBoxes.add(new JCheckBox());
-			receivers.add(new JButton());
-			receivers.get(i).setIcon(list.getUser(i).getPicture());
-			receivers.get(i).setToolTipText(list.getUser(i).getName());
-			receivers.get(i).addActionListener(new Listener());
+			if(!modelContactList.contains(list.getUser(i).getName())){
+				modelContactList.addElement(list.getUser(i).getName());
+			}
 		}
 	}
 
-	private void populateAllUsersList() {
+	public void populateOnlineList() {
 		UserList list = controller.getAllUsers();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			checkBoxesAll.add(new JCheckBox());
-			receiversAll.add(new JButton());
-			receiversAll.get(i).setIcon(list.getUser(i).getPicture());
-			receiversAll.get(i).setToolTipText(list.getUser(i).getName());
-			receiversAll.get(i).addActionListener(new Listener());
+			if (!modelOnlineList.contains(list.getUser(i).getName())) {
+				modelOnlineList.addElement(list.getUser(i).getName());
+			}
 		}
 	}
 
@@ -155,13 +177,7 @@ public class MessageUI extends JPanel {
 	}
 
 	protected ArrayList<String> getReceivers() {
-		ArrayList<String> receiver = new ArrayList<String>();
-		for (int i = 0; i < checkBoxes.size(); i++) {
-			if (checkBoxes.get(i).isSelected()) {
-				receiver.add(receivers.get(i).getToolTipText());
-			}
-		}
-		return receiver;
+		return receivers;
 	}
 
 	public void addResponse(Message message) {
@@ -179,24 +195,18 @@ public class MessageUI extends JPanel {
 		}
 	}
 
-	private class Listener implements ActionListener, KeyListener {
+	private class Listener implements ActionListener, KeyListener, MouseListener {
 
 		@Override
 		public void keyPressed(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void keyReleased(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void keyTyped(KeyEvent k) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -210,28 +220,41 @@ public class MessageUI extends JPanel {
 			}
 			if (a.getSource() == btnSend) {
 				controller.send();
+				receivers.clear();
 			}
 			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
-				scrollContactPane.revalidate();
-				scrollContactPane.repaint();
-
 			}
-			for (int i = 0; i < receivers.size(); i++) {
-				if (a.getSource() == receivers.get(i)) {
-					checkBoxes.get(i).setSelected(true);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getSource() == listContacts) {
+				if (!receivers.contains(listContacts.getSelectedValue())){
+					receivers.add(listContacts.getSelectedValue());
+				}
+			} else if (e.getSource() == listOnline) {
+				if (!receivers.contains(listOnline.getSelectedValue())){
+					receivers.add(listOnline.getSelectedValue());					
 				}
 			}
 		}
 
-	}
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
 
-	public static void main(String[] args) {
-		MessageUI ui = new MessageUI(null);
-		JFrame frame = new JFrame("Messenger");
-		frame.getContentPane().add(ui);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
 	}
 }

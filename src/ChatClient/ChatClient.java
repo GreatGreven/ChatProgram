@@ -2,10 +2,7 @@ package ChatClient;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 import resources.*;
 
 /**
@@ -25,12 +22,15 @@ public class ChatClient {
 	private ServerListener listener;
 
 	/**
-	 * Constructor that opens to the server and starts an ObjectInputStream 
-	 * to the socket and a serverlistener.
+	 * Constructor that opens to the server and starts an ObjectInputStream to the
+	 * socket and a serverlistener.
 	 * 
-	 * @param ip String with the ip-address to the selected server
-	 * @param serverPort Port number the server is listening at.
-	 * @param listener that adds a listener to the MessageList.
+	 * @param ip
+	 *            String with the ip-address to the selected server
+	 * @param serverPort
+	 *            Port number the server is listening at.
+	 * @param listener
+	 *            that adds a listener to the MessageList.
 	 */
 
 	protected ChatClient(String ip, int serverPort, ServerListener listener) {
@@ -51,14 +51,14 @@ public class ChatClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Can not connect to server \n" + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 
-	
 	/**
 	 * Method that sends a message to the chosen port.
-	 * @param message sending message to selected server.
+	 * 
+	 * @param message
+	 *            sending message to selected server.
 	 */
 	protected void send(Message message) {
 		try {
@@ -70,16 +70,16 @@ public class ChatClient {
 	}
 
 	/**
-	 * Inner class that creates a thread so the client recieves an Object from the server.
-	 * When an Object is recieved it will be sent to the UserList.
+	 * Inner class that creates a thread so the client recieves an Object from the
+	 * server. When an Object is recieved it will be sent to the UserList.
 	 * 
-	 * @author 
+	 * @author
 	 *
 	 */
-	
+
 	private class TCPListener extends Thread {
 		public void run() {
-			while (!Thread.interrupted()) {
+			while (!socket.isClosed()) {
 				try {
 					Object response = ois.readObject();
 					System.out.println(response);
@@ -99,8 +99,7 @@ public class ChatClient {
 						socket.close();
 					} catch (IOException e1) {
 					}
-					Thread.currentThread().interrupt();
-					;
+
 				}
 			}
 		}

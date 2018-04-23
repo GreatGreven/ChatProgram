@@ -1,18 +1,18 @@
 package resources;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 
 public class Message implements Serializable{
+	private static final long serialVersionUID = -8548295545248394817L;
 	private User sender;
 	private UserList receivers;
 	private String text;
 	private ImageIcon image;
-	private Date date = new Date();
-	private Date delivered;
-	private Date received;
+	private String delivered;
+	private String received;
 
 	public Message(User sender, UserList receivers){
 		this.sender = sender;
@@ -55,26 +55,26 @@ public class Message implements Serializable{
 
 	public void setDeliveredDate(){
 		if (delivered == null) {
-			this.delivered = new Date();
+			this.delivered = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 	}
 	
-	public Date getDeliveredDate() {
+	public String getDeliveredDate() {
 		return delivered;
 	}
 
 	public void setReceivedDate(){
 		if (received == null) {
-			this.received = new Date();
+			this.received = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 	}
 	
-	public Date getReceivedDate() {
+	public String getReceivedDate() {
 		return received;
 	}
 	
 	public String toString(){
-		return "(" + super.toString() + ") Sender: " + sender + " Receivers: " + receivers + " Text: " + text + 
+		return "Sender: " + sender + " Receivers: " + receivers + " Text: " + text + 
 				" Image: " + image + " Delivered: " + delivered + " Received: " + received;
 	}
 }
