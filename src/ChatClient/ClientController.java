@@ -12,6 +12,12 @@ import resources.Message;
 import resources.User;
 import resources.UserList;
 
+/**
+ * Class that creates a client for the program  
+ * @author 
+ *
+ */
+
 public class ClientController {
 	private LoginUI loginUI;
 	private MessageUI messageUI;
@@ -22,6 +28,15 @@ public class ClientController {
 	private UserList contacts;
 	private final String filename = "files/localContacts.dat";
 
+	
+	/**
+	 * Constructor that opens to the server
+	 *  
+	 * @param ip String with the ip-address to the selected server
+	 * 
+	 * @param ServerPort Port number the server is listening at.
+	 */
+	
 	protected ClientController(String ip, int serverPort) {
 		chatClient = new ChatClient(ip, serverPort, new ServerResponse());
 		contacts = new UserList();
@@ -31,6 +46,10 @@ public class ClientController {
 		showLoginUI();
 	}
 
+	/**
+	 * Method that show the LogIn screen.
+	 */
+	
 	private void showLoginUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -43,6 +62,10 @@ public class ClientController {
 		});
 	}
 
+	/**
+	 * Method that show the Message screen. 
+	 */
+	
 	private void showMessageUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -60,6 +83,10 @@ public class ClientController {
 		});
 	}
 
+	/**
+	 * Method that reads the Userlist 
+	 */
+	
 	private void readContacts() {
 		try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
 			try {
@@ -70,6 +97,10 @@ public class ClientController {
 		}
 	}
 
+	/**
+	 * Method that writes the contacts     
+	 */
+	
 	private void writeContacts() {
 		try (ObjectOutputStream oos = new ObjectOutputStream(
 				new BufferedOutputStream(new FileOutputStream(filename)))) {
@@ -106,6 +137,10 @@ public class ClientController {
 		chatClient.login(user);
 	}
 
+	/**
+	 *  Method that sends the message 
+	 */
+	
 	protected void send() {
 		String text = messageUI.getText();
 		String iconPath = loginUI.getIconPath();
@@ -144,6 +179,13 @@ public class ClientController {
 		messageUI.revalidate();
 		messageUI.repaint();
 	}
+	
+	/**
+	 * Inner class that implements a serverlistener that waits to recieve an message.
+	 * 
+	 * @author 
+	 *
+	 */
 
 	private class ServerResponse implements ServerListener {
 		public void receive(Message message) {
