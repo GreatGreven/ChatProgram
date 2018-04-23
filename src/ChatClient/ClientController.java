@@ -133,11 +133,14 @@ public class ClientController {
 		} else {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
+				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
+				
 				JOptionPane.showMessageDialog(null, contact + " added");
 			} else {
 				JOptionPane.showMessageDialog(null, contact + " doesn't exists");
 			}
 		}
+		
 		messageUI.revalidate();
 		messageUI.repaint();
 	}
@@ -156,7 +159,6 @@ public class ClientController {
 			}
 			if (allUsers.exist(user.getName())){
 				allUsers.removeUser(user);
-				System.out.println("user removed");
 			}
 			if (user.isConnected()) {
 				messageUI.populateOnlineList();
