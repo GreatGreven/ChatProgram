@@ -1,16 +1,13 @@
 package ChatClient;
 
-import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-
 import resources.Message;
 import resources.User;
 import resources.UserList;
@@ -159,12 +156,12 @@ public class ClientController {
 			}
 			if (allUsers.exist(user.getName())){
 				allUsers.removeUser(user);
+				System.out.println("user removed");
 			}
 			if (user.isConnected()) {
-				// 1 NY RAD
-				messageUI.populateOnlineList2();
-				messageUI.listOnline.revalidate();
-				messageUI.listOnline.repaint();
+				messageUI.populateOnlineList();
+				messageUI.revalidate();
+				messageUI.repaint();
 				
 			} else {
 				user.setConnected(true);

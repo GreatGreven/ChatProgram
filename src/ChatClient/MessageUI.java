@@ -35,8 +35,9 @@ public class MessageUI extends JPanel {
 	private ArrayList<String> receivers = new ArrayList<String>();
 	private JPanel pnlProfile;
 	private JLabel lblIcon;
-//Model till JList för att kunna adda elements i efterhand.
-	DefaultListModel<String> model = new DefaultListModel<>();
+//Model till JList fï¿½r att kunna adda elements i efterhand.
+	private DefaultListModel<String> modelOnlineList = new DefaultListModel<>();
+	private DefaultListModel<String> modelContactList = new DefaultListModel<>();
 
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
@@ -95,8 +96,8 @@ public class MessageUI extends JPanel {
 		JLabel lblContacts = new JLabel("Contacts");
 		lblContacts.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContacts.add(lblContacts, BorderLayout.NORTH);
-		listContacts = new JList<String>(populateContactList());
-		// listContacts = new JList<String>();
+		listContacts = new JList<String>(modelContactList);
+		populateContactList();
 		pnlContacts.add(listContacts, BorderLayout.CENTER);
 
 		pnlOnline = new JPanel();
@@ -106,10 +107,8 @@ public class MessageUI extends JPanel {
 		pnlOnline.add(lblOnline, BorderLayout.NORTH);
 		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
 		//2 NYA RADER
-		listOnline = new JList<>(model);
-		populateOnlineList2();
-		// listOnline = new JList<String>(populateOnlineList());
-		// listOnline = new JList<String>();
+		listOnline = new JList<>(modelOnlineList);
+		populateOnlineList();
 		pnlOnline.add(listOnline, BorderLayout.CENTER);
 
 		pnlProfile = new JPanel();
@@ -151,32 +150,22 @@ public class MessageUI extends JPanel {
 
 	}
 
-	private String[] populateContactList() {
+	private void populateContactList() {
 		UserList list = controller.getContacts();
-		String[] dataList = new String[list.numberOfUsers()];
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			dataList[i] = list.getUser(i).getName();
-		}
-		return dataList;
-	}
-		
-	// NY METOD
-	public void populateOnlineList2() {
-		UserList list = controller.getAllUsers();
-		for (int i = 0; i < list.numberOfUsers(); i++) {
-			if (!model.contains(list.getUser(i).getName())) {
-				model.addElement(list.getUser(i).getName());
+			if(!modelContactList.contains(list.getUser(i).getName())){
+				modelContactList.addElement(list.getUser(i).getName());
 			}
 		}
 	}
 
-	public String[] populateOnlineList() {
+	public void populateOnlineList() {
 		UserList list = controller.getAllUsers();
-		String[] dataList = new String[list.numberOfUsers()];
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			dataList[i] = list.getUser(i).getName();
+			if (!modelOnlineList.contains(list.getUser(i).getName())) {
+				modelOnlineList.addElement(list.getUser(i).getName());
+			}
 		}
-		return dataList;
 	}
 
 	protected String getText() {
@@ -231,6 +220,7 @@ public class MessageUI extends JPanel {
 			}
 			if (a.getSource() == btnSend) {
 				controller.send();
+				receivers.clear();
 			}
 			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
@@ -240,9 +230,13 @@ public class MessageUI extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getSource() == listContacts) {
-				receivers.add(listContacts.getSelectedValue());
+				if (!receivers.contains(listContacts.getSelectedValue())){
+					receivers.add(listContacts.getSelectedValue());
+				}
 			} else if (e.getSource() == listOnline) {
-				receivers.add(listOnline.getSelectedValue());
+				if (!receivers.contains(listOnline.getSelectedValue())){
+					receivers.add(listOnline.getSelectedValue());					
+				}
 			}
 		}
 
