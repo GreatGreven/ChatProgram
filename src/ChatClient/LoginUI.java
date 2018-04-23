@@ -10,6 +10,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Class that extends the JPanel and creates an LogIn-screen for the program. 
+ * 
+ * @author 
+ *
+ */
 public class LoginUI extends JPanel{
 	private ClientController controller;
 	private JPanel pnlContent = new JPanel(new GridLayout(2,1,0,0));
@@ -24,6 +30,11 @@ public class LoginUI extends JPanel{
 	private File file;
 	private JLabel lblFile = new JLabel();
 	
+	/**
+	 * Creates an Log in-screen  
+	 * 
+	 * @param cont handles the controller
+	 */
 	
 	public LoginUI(ClientController cont) {
 		this.controller = cont;
@@ -75,10 +86,22 @@ public class LoginUI extends JPanel{
 		return name;
 	}
 	
+	/**
+	 * Method that recieves a file  
+	 * @return the filename
+	 */
+	
 	public String getIconPath(){
 		String filename = lblFile.getText();
 		return filename;
 	}
+	
+	/**
+	 * Inner class that implements an actionlistener.
+	 * 
+	 * @author 
+	 *
+	 */
 	
 	private class AL implements ActionListener{
 		public void actionPerformed(ActionEvent e) {

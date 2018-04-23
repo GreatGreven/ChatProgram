@@ -8,6 +8,14 @@ import javax.swing.JOptionPane;
 
 import resources.*;
 
+/**
+ * Class that opens a Socket to our Server and starts the ServerListener that
+ * will recieve Messages and a User list.
+ * 
+ * @author Senor de la Cruz
+ *
+ */
+
 public class ChatClient {
 	private String ip;
 	private int serverPort;
@@ -15,6 +23,15 @@ public class ChatClient {
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
 	private ServerListener listener;
+
+	/**
+	 * Constructor that opens to the server and starts an ObjectInputStream 
+	 * to the socket and a serverlistener.
+	 * 
+	 * @param ip String with the ip-address to the selected server
+	 * @param serverPort Port number the server is listening at.
+	 * @param listener that adds a listener to the MessageList.
+	 */
 
 	protected ChatClient(String ip, int serverPort, ServerListener listener) {
 		this.ip = ip;
@@ -38,6 +55,11 @@ public class ChatClient {
 		}
 	}
 
+	
+	/**
+	 * Method that sends a message to the chosen port.
+	 * @param message sending message to selected server.
+	 */
 	protected void send(Message message) {
 		try {
 			oos.writeObject(message);
@@ -47,6 +69,14 @@ public class ChatClient {
 		}
 	}
 
+	/**
+	 * Inner class that creates a thread so the client recieves an Object from the server.
+	 * When an Object is recieved it will be sent to the UserList.
+	 * 
+	 * @author 
+	 *
+	 */
+	
 	private class TCPListener extends Thread {
 		public void run() {
 			while (!Thread.interrupted()) {
@@ -69,7 +99,8 @@ public class ChatClient {
 						socket.close();
 					} catch (IOException e1) {
 					}
-					Thread.currentThread().interrupt();;
+					Thread.currentThread().interrupt();
+					;
 				}
 			}
 		}

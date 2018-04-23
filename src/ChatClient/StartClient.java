@@ -1,5 +1,5 @@
-package ChatClient;
-import javax.swing.SwingUtilities;
+package ChatClient; 
+import javax.swing.SwingUtilities; 
 
 public class StartClient {
 	public static void main(String[] args) {
