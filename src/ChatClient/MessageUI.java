@@ -232,7 +232,8 @@ public class MessageUI extends JPanel {
 				if (!receivers.contains(listContacts.getSelectedValue())){
 					receivers.add(listContacts.getSelectedValue());
 				}
-			} else if (e.getSource() == listOnline) {
+			}
+			if (e.getSource() == listOnline) {
 				if (!receivers.contains(listOnline.getSelectedValue())){
 					receivers.add(listOnline.getSelectedValue());					
 				}
