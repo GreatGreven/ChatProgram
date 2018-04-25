@@ -19,7 +19,9 @@ public class UnsentMessages {
 	public synchronized ArrayList<Message> get(String user){
 		return unsent.get(user);
 	}
-	
+	public synchronized void remove (String user) {
+		unsent.remove(user);
+	}
 	public synchronized boolean contains(String key){
 		return unsent.containsKey(key);
 	}

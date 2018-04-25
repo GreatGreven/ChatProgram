@@ -55,7 +55,8 @@ public class MessageUI extends JPanel {
 		taRead.setEditable(!editable);
 		taWrite.setEditable(editable);
 		initializeListeners();
-
+		controller.readContacts();
+		populateContactList();
 	}
 
 	private JPanel writePanel() {
@@ -97,6 +98,7 @@ public class MessageUI extends JPanel {
 		pnlContacts.add(lblContacts, BorderLayout.NORTH);
 		listContacts = new JList<String>(modelContactList);
 		populateContactList();
+		listContacts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		pnlContacts.add(listContacts, BorderLayout.CENTER);
 
 		pnlOnline = new JPanel();
@@ -105,9 +107,11 @@ public class MessageUI extends JPanel {
 		JLabel lblOnline = new JLabel("Online");
 		pnlOnline.add(lblOnline, BorderLayout.NORTH);
 		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
-		//2 NYA RADER
+		// 2 NYA RADER
 		listOnline = new JList<>(modelOnlineList);
 		populateOnlineList();
+		listOnline.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
 		pnlOnline.add(listOnline, BorderLayout.CENTER);
 
 		pnlProfile = new JPanel();
@@ -143,8 +147,8 @@ public class MessageUI extends JPanel {
 		Listener l = new Listener();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
-		listOnline.addMouseListener(l);
-		listContacts.addMouseListener(l);
+		// listOnline.addMouseListener(l);
+		// listContacts.addMouseListener(l);
 		btnAddContact.addActionListener(l);
 
 	}
@@ -152,7 +156,7 @@ public class MessageUI extends JPanel {
 	protected void populateContactList() {
 		UserList list = controller.getContacts();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			if(!modelContactList.contains(list.getUser(i).getName())){
+			if (!modelContactList.contains(list.getUser(i).getName())) {
 				modelContactList.addElement(list.getUser(i).getName());
 			}
 		}
@@ -194,7 +198,7 @@ public class MessageUI extends JPanel {
 		}
 	}
 
-	private class Listener implements ActionListener, KeyListener, MouseListener {
+	private class Listener implements ActionListener, KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent k) {
@@ -218,6 +222,16 @@ public class MessageUI extends JPanel {
 				}
 			}
 			if (a.getSource() == btnSend) {
+				java.util.List<String> listC = listContacts.getSelectedValuesList();
+				java.util.List<String> listO = listOnline.getSelectedValuesList();
+				for (int i = 0; i < listO.size() || i < listC.size(); i++) {
+					if (i < listO.size()){
+						receivers.add(listO.get(i));
+					}
+					if (i < listC.size()){
+						receivers.add(listC.get(i));
+					}
+				}
 				controller.send();
 				receivers.clear();
 			}
@@ -225,36 +239,36 @@ public class MessageUI extends JPanel {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
 			}
 		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (e.getSource() == listContacts) {
-				if (!receivers.contains(listContacts.getSelectedValue())){
-					receivers.add(listContacts.getSelectedValue());
-				}
-			}
-			if (e.getSource() == listOnline) {
-				if (!receivers.contains(listOnline.getSelectedValue())){
-					receivers.add(listOnline.getSelectedValue());					
-				}
-			}
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
+		//
+		// @Override
+		// public void mouseClicked(MouseEvent e) {
+		// if (e.getSource() == listContacts) {
+		// if (!receivers.contains(listContacts.getSelectedValue())){
+		// receivers.add(listContacts.getSelectedValue());
+		// }
+		// }
+		// if (e.getSource() == listOnline) {
+		// if (!receivers.contains(listOnline.getSelectedValue())){
+		// receivers.add(listOnline.getSelectedValue());
+		// }
+		// }
+		// }
+		//
+		// @Override
+		// public void mouseEntered(MouseEvent e) {
+		// }
+		//
+		// @Override
+		// public void mouseExited(MouseEvent e) {
+		// }
+		//
+		// @Override
+		// public void mousePressed(MouseEvent e) {
+		// }
+		//
+		// @Override
+		// public void mouseReleased(MouseEvent e) {
+		// }
 
 	}
 }

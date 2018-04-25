@@ -26,24 +26,30 @@ public class ClientController {
 	private User user;
 	private UserList allUsers;
 	private UserList contacts;
-	private final String filename = "files/localContacts.dat";
+	// private final String filename = "files/localContacts.dat";
+
+	private String generateFileName() {
+		String fileName;
+		fileName = "files/localContacts" + user + ".dat";
+		return fileName;
+	}
 
 	/**
 	 * Constructor that opens to the server
 	 * 
-	 * @param ip
-	 *            String with the ip-address to the selected server
+	 * @param ip String with the ip-address to the selected server
 	 * 
-	 * @param ServerPort
-	 *            Port number the server is listening at.
+	 * @param ServerPort Port number the server is listening at.
 	 */
+
 	protected ClientController(String ip, int serverPort) {
 		chatClient = new ChatClient(ip, serverPort, new ServerResponse());
 		contacts = new UserList();
 		allUsers = new UserList();
 		loginUI = new LoginUI(this);
-		readContacts();
+		
 		showLoginUI();
+//		readContacts();
 	}
 
 	/**
@@ -84,8 +90,9 @@ public class ClientController {
 	/**
 	 * Method that reads the UserList from the file.
 	 */
-	private void readContacts() {
-		try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+	public void readContacts() {
+		String fileName = generateFileName();
+		try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
 			try {
 				contacts = (UserList) ois.readObject();
 			} catch (ClassNotFoundException e) {
@@ -98,8 +105,9 @@ public class ClientController {
 	 * Method that writes the contacts to a file.
 	 */
 	private void writeContacts() {
+		String fileName = generateFileName();
 		try (ObjectOutputStream oos = new ObjectOutputStream(
-				new BufferedOutputStream(new FileOutputStream(filename)))) {
+			new BufferedOutputStream(new FileOutputStream(fileName)))) {
 			oos.writeObject(contacts);
 			oos.flush();
 		} catch (IOException e) {
@@ -149,8 +157,11 @@ public class ClientController {
 		ArrayList<String> usernames = messageUI.getReceivers();
 		for (int i = 0; i < usernames.size(); i++) {
 			if (allUsers.exist(usernames.get(i))) {
-				int allUserIndex = allUsers.indexOf(usernames.get(i));
-				receivers.addUser(allUsers.getUser(allUserIndex));
+				int index = allUsers.indexOf(usernames.get(i));
+				receivers.addUser(allUsers.getUser(index));
+			} else if(contacts.exist(usernames.get(i))){
+				int index = contacts.indexOf(usernames.get(i));
+				receivers.addUser(contacts.getUser(index));
 			}
 		}
 		Message message = new Message(user, receivers, text, image);
@@ -163,7 +174,7 @@ public class ClientController {
 		} else {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
-				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
+//				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
 
 				JOptionPane.showMessageDialog(null, contact + " added");
 			} else {
@@ -192,7 +203,7 @@ public class ClientController {
 			allUsers = userList;
 			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
 				if (contacts.exist(allUsers.getUser(i).getName())) {
-					allUsers.removeUser(allUsers.getUser(i));
+//					allUsers.removeUser(allUsers.getUser(i));
 				}
 			}
 			if (allUsers.exist(user.getName())) {

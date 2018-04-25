@@ -1,4 +1,4 @@
-package ChatServer; 
+package ChatServer;
 
 import java.io.*;
 import java.net.*;
@@ -56,21 +56,33 @@ public class ChatServer {
 		UserList list = message.getReceivers();
 		list.addUser(message.getSender());
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			clientHandlers.get(list.getUser(i)).send(message);
+			if(clientHandlers.containsKey(list.getUser(i).getName())){
+				clientHandlers.get(list.getUser(i).getName()).send(message);
+			} else {
+				if (unsentMessages.contains(list.getUser(i).getName())) {
+					ArrayList<Message> oldList = unsentMessages.get(list.getUser(i).getName());
+					oldList.add(message);
+					unsentMessages.put(list.getUser(i).getName(), oldList);
+				} else {
+					ArrayList<Message> newList = new ArrayList<Message>();
+					newList.add(message);
+					unsentMessages.put(list.getUser(i).getName(), newList);
+				}
+			}
 		}
 	}
 
 	protected void respond(UserList listToSend) {
 		for (int i = 0; i < listToSend.numberOfUsers(); i++) {
-				clientHandlers.get(listToSend.getUser(i).getName()).send(listToSend);
+			clientHandlers.get(listToSend.getUser(i).getName()).send(listToSend);
 		}
 	}
-	
+
 	protected UserList getAllUsers() {
 		UserList allUsers = new UserList();
 		Iterator<String> iter = clientHandlers.keySet().iterator();
-		while(iter.hasNext()) {
-			allUsers.addUser(new User(iter.next(),null));
+		while (iter.hasNext()) {
+			allUsers.addUser(new User(iter.next(), null));
 		}
 		return allUsers;
 	}
@@ -81,7 +93,7 @@ public class ChatServer {
 				try {
 					Socket socket = serverSocket.accept();
 					pool.execute(new ClientHandler(socket));
-					
+
 				} catch (IOException e) {
 				}
 			}
@@ -112,6 +124,13 @@ public class ChatServer {
 				oos.flush();
 			} catch (IOException e) {
 			}
+			if (unsentMessages.contains(user.getName())) {
+				ArrayList<Message> recievedList = unsentMessages.get(user.getName());
+				for (Message m : recievedList) {
+					send(m);
+				}
+				unsentMessages.remove(user.getName());
+			}
 		}
 
 		public void send(Message message) {
@@ -119,15 +138,6 @@ public class ChatServer {
 				oos.writeObject(message);
 				oos.flush();
 			} catch (IOException e) {
-				if (unsentMessages.contains(user.getName())) {
-					ArrayList<Message> list = unsentMessages.get(user.getName());
-					list.add(message);
-					unsentMessages.put(user.getName(), list);
-				} else {
-					ArrayList<Message> newList = new ArrayList<Message>();
-					newList.add(message);
-					unsentMessages.put(user.getName(), newList);
-				}
 			}
 		}
 
@@ -146,7 +156,7 @@ public class ChatServer {
 		}
 
 		public void run() {
-			while (!Thread.interrupted()) {
+			while (!Thread.interrupted() && !socket.isClosed()) {
 				try {
 					Object request = ois.readObject();
 					if (request instanceof User) {
@@ -167,13 +177,21 @@ public class ChatServer {
 						listener.receive(message);
 					}
 				} catch (SocketException e) {
+					ui.println(user + " has disconnected (" + toString() + ")");
+					clientHandlers.remove(user);
+					listener.disconnectedUser(user);
+					try {
+						socket.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} catch (Exception e) {
 					try {
 						ui.println(user + " has disconnected (" + toString() + ")");
 						socket.close();
 						clientHandlers.remove(user);
 						listener.disconnectedUser(user);
-
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
