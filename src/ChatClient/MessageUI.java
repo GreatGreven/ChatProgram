@@ -147,8 +147,6 @@ public class MessageUI extends JPanel {
 		Listener l = new Listener();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
-		// listOnline.addMouseListener(l);
-		// listContacts.addMouseListener(l);
 		btnAddContact.addActionListener(l);
 
 	}
@@ -186,15 +184,11 @@ public class MessageUI extends JPanel {
 	public void addResponse(Message message) {
 		String content = taRead.getText();
 		String append = message.getText();
-		this.taRead.setText(content + "\n" + append);
+		this.taRead.setText(content + append + "\n");
 		ImageIcon image = message.getImage();
 		if (image != null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					JFrame iconFrame = new JFrame("Image");
-					iconFrame.getContentPane().add(new JLabel(image));
-				}
-			});
+			JOptionPane.showMessageDialog(null, null, "Message from " + message.getSender().getName(),
+					JOptionPane.PLAIN_MESSAGE, image);
 		}
 	}
 
@@ -225,50 +219,20 @@ public class MessageUI extends JPanel {
 				java.util.List<String> listC = listContacts.getSelectedValuesList();
 				java.util.List<String> listO = listOnline.getSelectedValuesList();
 				for (int i = 0; i < listO.size() || i < listC.size(); i++) {
-					if (i < listO.size()){
+					if (i < listO.size()) {
 						receivers.add(listO.get(i));
 					}
-					if (i < listC.size()){
+					if (i < listC.size()) {
 						receivers.add(listC.get(i));
 					}
 				}
 				controller.send();
 				receivers.clear();
+				lblImageFile.setText("");
 			}
 			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
 			}
 		}
-		//
-		// @Override
-		// public void mouseClicked(MouseEvent e) {
-		// if (e.getSource() == listContacts) {
-		// if (!receivers.contains(listContacts.getSelectedValue())){
-		// receivers.add(listContacts.getSelectedValue());
-		// }
-		// }
-		// if (e.getSource() == listOnline) {
-		// if (!receivers.contains(listOnline.getSelectedValue())){
-		// receivers.add(listOnline.getSelectedValue());
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void mouseEntered(MouseEvent e) {
-		// }
-		//
-		// @Override
-		// public void mouseExited(MouseEvent e) {
-		// }
-		//
-		// @Override
-		// public void mousePressed(MouseEvent e) {
-		// }
-		//
-		// @Override
-		// public void mouseReleased(MouseEvent e) {
-		// }
-
 	}
 }

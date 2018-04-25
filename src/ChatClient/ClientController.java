@@ -26,7 +26,6 @@ public class ClientController {
 	private User user;
 	private UserList allUsers;
 	private UserList contacts;
-	// private final String filename = "files/localContacts.dat";
 
 	private String generateFileName() {
 		String fileName;
@@ -146,7 +145,7 @@ public class ClientController {
 	 */
 	protected void send() {
 		String text = messageUI.getText();
-		String iconPath = loginUI.getIconPath();
+		String iconPath = messageUI.getImagePath();
 		ImageIcon image;
 		if (iconPath.equals("")) {
 			image = null;
@@ -174,7 +173,7 @@ public class ClientController {
 		} else {
 			if (allUsers.exist(contact)) {
 				contacts.addUser(allUsers.getUser(allUsers.indexOf(contact)));
-//				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
+				allUsers.removeUser(allUsers.getUser(allUsers.indexOf(contact)));
 
 				JOptionPane.showMessageDialog(null, contact + " added");
 			} else {
