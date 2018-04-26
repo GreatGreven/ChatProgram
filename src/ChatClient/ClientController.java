@@ -200,11 +200,11 @@ public class ClientController {
 
 		public void receive(UserList userList) {
 			allUsers = userList;
-			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
-				if (contacts.exist(allUsers.getUser(i).getName())) {
-//					allUsers.removeUser(allUsers.getUser(i));
-				}
-			}
+//			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
+//				if (contacts.exist(allUsers.getUser(i).getName())) {
+////					allUsers.removeUser(allUsers.getUser(i));
+//				}
+//			}
 			if (allUsers.exist(user.getName())) {
 				allUsers.removeUser(user);
 			}

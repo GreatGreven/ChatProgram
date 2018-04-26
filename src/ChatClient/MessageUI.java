@@ -123,6 +123,7 @@ public class MessageUI extends JPanel {
 		lblIcon = new JLabel();
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIcon.setIcon(controller.getThisUser().getPicture());
+		lblIcon.setToolTipText(controller.getThisUser().getName());
 		lblIcon.setMaximumSize(new Dimension(100, 100));
 		pnlProfile.add(lblIcon, BorderLayout.CENTER);
 
@@ -183,7 +184,7 @@ public class MessageUI extends JPanel {
 
 	public void addResponse(Message message) {
 		String content = taRead.getText();
-		String append = message.getText();
+		String append = "From " + message.getSender().getName() + " : " + message.getText();
 		this.taRead.setText(content + append + "\n");
 		ImageIcon image = message.getImage();
 		if (image != null) {
@@ -220,10 +221,14 @@ public class MessageUI extends JPanel {
 				java.util.List<String> listO = listOnline.getSelectedValuesList();
 				for (int i = 0; i < listO.size() || i < listC.size(); i++) {
 					if (i < listO.size()) {
-						receivers.add(listO.get(i));
+						if (receivers.contains(listO.get(i))){
+							receivers.add(listO.get(i));
+						}
 					}
 					if (i < listC.size()) {
-						receivers.add(listC.get(i));
+						if (receivers.contains(listC.get(i))){
+							receivers.add(listC.get(i));
+						}
 					}
 				}
 				controller.send();
