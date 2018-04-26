@@ -221,12 +221,12 @@ public class MessageUI extends JPanel {
 				java.util.List<String> listO = listOnline.getSelectedValuesList();
 				for (int i = 0; i < listO.size() || i < listC.size(); i++) {
 					if (i < listO.size()) {
-						if (receivers.contains(listO.get(i))){
+						if (!receivers.contains(listO.get(i))){
 							receivers.add(listO.get(i));
 						}
 					}
 					if (i < listC.size()) {
-						if (receivers.contains(listC.get(i))){
+						if (!receivers.contains(listC.get(i))){
 							receivers.add(listC.get(i));
 						}
 					}
