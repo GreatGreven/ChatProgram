@@ -7,7 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class LogUI extends JPanel{
-
+	private static final long serialVersionUID = -1598533036400634233L;
 	private JTextArea textArea = new JTextArea();
 	private JScrollPane jScrollPane = new JScrollPane(textArea);
 	

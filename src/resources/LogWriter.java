@@ -2,9 +2,6 @@ package resources;
 
 import java.io.*;
 import java.util.Calendar;
-import java.util.Date;
-
-import javax.swing.SwingUtilities;
 
 public class LogWriter {
 	private static LogWriter instance;
