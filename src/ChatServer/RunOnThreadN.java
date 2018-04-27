@@ -1,9 +1,15 @@
 package ChatServer;
 
 import java.util.ArrayList;
-
-import resources.Buffer;
-
+import java.util.LinkedList;
+/**
+ * Class works a general pool of thread.
+ */
+/**
+ * 
+ * @author Eric Grevillius
+ *
+ */
 public class RunOnThreadN {
 	private Buffer<Runnable> tasks = new Buffer<Runnable>();
 	private ArrayList<Thread> threads;
@@ -27,7 +33,10 @@ public class RunOnThreadN {
 								runnable.run();
 								execute(runnable);
 							} catch (InterruptedException e) {
-								break;
+								try {
+									join();
+								} catch (InterruptedException e1) {
+								}
 							}
 						}
 					}
@@ -51,15 +60,33 @@ public class RunOnThreadN {
 	public synchronized void execute(Runnable task) {
 		tasks.put(task);
 	}
-
+	
 	private class StopThread implements Runnable {
 		public void run() {
 			Thread.currentThread().interrupt();
 		}
-
 		public String toString() {
 			return "Closing down " + Thread.currentThread();
 		}
-
+	}
+	
+	private class Buffer<T> {
+		private LinkedList<T> buffer = new LinkedList<T>();
+		
+		public synchronized void put(T obj) {
+			buffer.addLast(obj);
+			notifyAll();
+		}
+		
+		public synchronized T get() throws InterruptedException {
+			while(buffer.isEmpty()) {
+				wait();
+			}
+			return buffer.removeFirst();
+		}
+		
+		public int size() {
+			return buffer.size();
+		}
 	}
 }

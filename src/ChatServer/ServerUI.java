@@ -3,7 +3,7 @@ package ChatServer;
 import javax.swing.*;
 
 //import resources.Date;
-import resources.Log;
+import resources.LogWriter;
 import resources.LogReader;
 
 import java.awt.*;
@@ -18,7 +18,7 @@ public class ServerUI extends JPanel {
 	private JButton btnStart;
 	private JButton btnStop;
 	private JButton btnLog;
-	private Log log;
+	private LogWriter log;
 	private LogUI logUI;
 	private JFrame logFrame;
 	private JButton btnClose;
@@ -26,7 +26,7 @@ public class ServerUI extends JPanel {
 
 	public ServerUI(ServerController controller) {
 		this.controller = controller;
-		log = Log.getInstance();
+		log = LogWriter.getInstance();
 		log.setFileName(fileName);
 		logUI = new LogUI();
 		int width = 400;

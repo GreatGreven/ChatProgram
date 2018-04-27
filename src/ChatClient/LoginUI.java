@@ -10,8 +10,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Class that extends the JPanel and creates an LogIn-screen for the program. 
+ */
+/**
  * 
- * @author 
+ * @author Eric Grevillius
  *
  */
 public class LoginUI extends JPanel{
@@ -32,7 +34,7 @@ public class LoginUI extends JPanel{
 	/**
 	 * Creates an Log in-screen  
 	 * 
-	 * @param cont handles the controller
+	 * @param cont a link to the controller
 	 */
 	
 	public LoginUI(ClientController cont) {
@@ -86,7 +88,7 @@ public class LoginUI extends JPanel{
 	}
 	
 	/**
-	 * Method that recieves a file  
+	 * Method that receives a file  
 	 * @return the filename
 	 */
 	

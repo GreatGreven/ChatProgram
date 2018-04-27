@@ -6,19 +6,19 @@ import java.util.Date;
 
 import javax.swing.SwingUtilities;
 
-public class Log {
-	private static Log instance;
+public class LogWriter {
+	private static LogWriter instance;
 	private String filename;
 	private Calendar c;
 	private int year, month, day, hour, minute, second;
 
-	private Log() {
+	private LogWriter() {
 		c = Calendar.getInstance();
 	}
 
-	public static Log getInstance() {
+	public static LogWriter getInstance() {
 		if (instance == null) {
-			instance = new Log();
+			instance = new LogWriter();
 		}
 		return instance;
 	}

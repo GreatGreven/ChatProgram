@@ -120,9 +120,8 @@ public class MessageUI extends JPanel {
 		btnAddContact = new JButton("+ Add Contact");
 		pnlProfile.add(btnAddContact, BorderLayout.SOUTH);
 
-		lblIcon = new JLabel();
+		lblIcon = new JLabel(new ImageIcon(controller.getThisUser().getPicture().getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		lblIcon.setIcon(controller.getThisUser().getPicture());
 		lblIcon.setToolTipText(controller.getThisUser().getName());
 		lblIcon.setMaximumSize(new Dimension(100, 100));
 		pnlProfile.add(lblIcon, BorderLayout.CENTER);
@@ -234,6 +233,7 @@ public class MessageUI extends JPanel {
 				controller.send();
 				receivers.clear();
 				lblImageFile.setText("");
+				taWrite.setText("");
 			}
 			if (a.getSource() == btnAddContact) {
 				controller.addContact(JOptionPane.showInputDialog("Search for User"));
