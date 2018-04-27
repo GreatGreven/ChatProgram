@@ -6,16 +6,29 @@ import javax.swing.SwingUtilities;
 
 import resources.*;
 
+/**
+ * Class for controlling the server
+ * @author Oskar Engström Magnusson
+ *
+ */
 public class ServerController {
 	private ChatServer chatServer;
 	private ServerUI ui;
 	
+	/**
+	 * Constructor that creates the server UI and a chatServer-object
+	 * @param requestPort the port the server runs through
+	 * @param nbrOfThreads number of threads in the thread-pool
+	 */
 	public ServerController(int requestPort, int nbrOfThreads) {
 		ui = new ServerUI(this);
 		showServerUI();
 		chatServer = new ChatServer(requestPort, nbrOfThreads, new ClientResponse(), ui);
 	}
 	
+	/**
+	 * Method for showing the server-UI
+	 */
 	private void showServerUI(){
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
@@ -36,12 +49,24 @@ public class ServerController {
 		chatServer.stopServer();
 	}
 	
+	/**
+	 * Inner class that listens to clients and implements ClientListener
+	 * @author Oskar Engström Magnsson
+	 *
+	 */
 	private class ClientResponse implements ClientListener{
+		
+		/**
+		 * Method that receives a message from a client
+		 */
 		public void receive(Message message) {
 			ui.println(message);
 			chatServer.respond(message);
 		}
 
+		/**
+		 * Method that receives a user from a client
+		 */
 		public void receive(User user) {
 			UserList allUsers = chatServer.getAllUsers();
 			if (!allUsers.exist(user.getName())){
@@ -50,6 +75,9 @@ public class ServerController {
 			chatServer.respond(allUsers);
 		}
 		
+		/**
+		 * Method for when a user has disconnected
+		 */
 		public void disconnectedUser(User user) {
 			user.setConnected(false);
 		}
