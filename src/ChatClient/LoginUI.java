@@ -36,7 +36,6 @@ public class LoginUI extends JPanel{
 	 * 
 	 * @param cont a link to the controller
 	 */
-	
 	public LoginUI(ClientController cont) {
 		this.controller = cont;
 		pnlBtnLogin = new JPanel();
@@ -74,7 +73,6 @@ public class LoginUI extends JPanel{
 		this.add(lblFile, BorderLayout.SOUTH);
 		
 		initializeListeners();
-		
 	}
 	
 	private void initializeListeners(){
@@ -88,10 +86,9 @@ public class LoginUI extends JPanel{
 	}
 	
 	/**
-	 * Method that receives a file  
-	 * @return the filename
+	 * Method that returns a file-path  
+	 * @return the file-path of the chosen Icon.
 	 */
-	
 	public String getIconPath(){
 		String filename = lblFile.getText();
 		return filename;
@@ -100,10 +97,9 @@ public class LoginUI extends JPanel{
 	/**
 	 * Inner class that implements an actionlistener.
 	 * 
-	 * @author 
+	 * @author Eric Grevillius
 	 *
 	 */
-	
 	private class AL implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == btnImage){

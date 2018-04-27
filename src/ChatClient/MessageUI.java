@@ -8,9 +8,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import resources.*;
 
+/**
+ * 
+ * @author Eric Grevillius
+ *
+ *         Class that inherits from JPanel and is used as a GUI for sending and
+ *         receiving messages in the program.
+ */
 public class MessageUI extends JPanel {
 	private static final long serialVersionUID = 6091921199167131315L;
 	private ClientController controller;
@@ -38,6 +44,12 @@ public class MessageUI extends JPanel {
 	private DefaultListModel<String> modelOnlineList = new DefaultListModel<>();
 	private DefaultListModel<String> modelContactList = new DefaultListModel<>();
 
+	/**
+	 * Constructor creates a GUI for sending and receiving messages.
+	 * 
+	 * @param cont
+	 *            A link to the controller.
+	 */
 	public MessageUI(ClientController cont) {
 		this.controller = cont;
 		Dimension windowSize = new Dimension(500, 500);
@@ -59,6 +71,11 @@ public class MessageUI extends JPanel {
 		populateContactList();
 	}
 
+	/**
+	 * Creates the panel used for writing a message.
+	 * 
+	 * @return the write-panel.
+	 */
 	private JPanel writePanel() {
 		taWrite = new JTextArea();
 		btnSend = new JButton("Send");
@@ -72,6 +89,11 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
+	/**
+	 * Creates the panel used for reading messages.
+	 * 
+	 * @return the read-panel.
+	 */
 	private JPanel readPanel() {
 		taRead = new JTextArea();
 		scrollReadPane = new JScrollPane(taRead);
@@ -81,6 +103,11 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
+	/**
+	 * Creates the panel for browsing saved contacts and online users.
+	 * 
+	 * @return the contact-panel.
+	 */
 	private JPanel contactPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout(0, 0));
@@ -120,7 +147,8 @@ public class MessageUI extends JPanel {
 		btnAddContact = new JButton("+ Add Contact");
 		pnlProfile.add(btnAddContact, BorderLayout.SOUTH);
 
-		lblIcon = new JLabel(new ImageIcon(controller.getThisUser().getPicture().getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+		lblIcon = new JLabel(new ImageIcon(
+				controller.getThisUser().getPicture().getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIcon.setToolTipText(controller.getThisUser().getName());
 		lblIcon.setMaximumSize(new Dimension(100, 100));
@@ -129,6 +157,12 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
+	/**
+	 * Creates a panel within the write-panel that is for selecting an image
+	 * from a file to send.
+	 * 
+	 * @return the Image-selecting panel.
+	 */
 	private JPanel writeImagePanel() {
 		lblImageFile = new JLabel("");
 		btnImage = new JButton("Choose image");
@@ -143,14 +177,20 @@ public class MessageUI extends JPanel {
 		return panel;
 	}
 
+	/**
+	 * Initializes a single multi-listener to all elements that needs a
+	 * listener.
+	 */
 	private void initializeListeners() {
-		Listener l = new Listener();
+		AL l = new AL();
 		btnSend.addActionListener(l);
 		btnImage.addActionListener(l);
 		btnAddContact.addActionListener(l);
-
 	}
 
+	/**
+	 * Populates the list showing contacts.
+	 */
 	protected void populateContactList() {
 		UserList list = controller.getContacts();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
@@ -160,6 +200,9 @@ public class MessageUI extends JPanel {
 		}
 	}
 
+	/**
+	 * Populates the list showing online users.
+	 */
 	protected void populateOnlineList() {
 		UserList list = controller.getAllUsers();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
@@ -169,18 +212,41 @@ public class MessageUI extends JPanel {
 		}
 	}
 
+	/**
+	 * Returns the text written in the text area for writing messages.
+	 * 
+	 * @return The text of the written message.
+	 */
 	protected String getText() {
 		return taWrite.getText();
 	}
 
+	/**
+	 * Returns the file-path for the chosen image.
+	 * 
+	 * @return
+	 */
 	protected String getImagePath() {
 		return lblImageFile.getText();
 	}
 
+	/**
+	 * Returns an ArrayList of strings with all the users that has been added as
+	 * receivers.
+	 * 
+	 * @return The ArrayList of receivers.
+	 */
 	protected ArrayList<String> getReceivers() {
 		return receivers;
 	}
 
+	/**
+	 * Adds a message to the display area of the GUI and a pop-up window
+	 * displaying an image from the message if there is one.
+	 * 
+	 * @param message
+	 *            Incoming message.
+	 */
 	public void addResponse(Message message) {
 		String content = taRead.getText();
 		String append = "From " + message.getSender().getName() + " : " + message.getText();
@@ -192,21 +258,13 @@ public class MessageUI extends JPanel {
 		}
 	}
 
-	private class Listener implements ActionListener, KeyListener {
-
-		@Override
-		public void keyPressed(KeyEvent k) {
-		}
-
-		@Override
-		public void keyReleased(KeyEvent k) {
-		}
-
-		@Override
-		public void keyTyped(KeyEvent k) {
-		}
-
-		@Override
+	/**
+	 * Inner class that implements an actionlistener.
+	 * 
+	 * @author Eric Grevillius
+	 *
+	 */
+	private class AL implements ActionListener {
 		public void actionPerformed(ActionEvent a) {
 			if (a.getSource() == btnImage) {
 				int fileValue = fc.showSaveDialog(null);
@@ -220,12 +278,12 @@ public class MessageUI extends JPanel {
 				java.util.List<String> listO = listOnline.getSelectedValuesList();
 				for (int i = 0; i < listO.size() || i < listC.size(); i++) {
 					if (i < listO.size()) {
-						if (!receivers.contains(listO.get(i))){
+						if (!receivers.contains(listO.get(i))) {
 							receivers.add(listO.get(i));
 						}
 					}
 					if (i < listC.size()) {
-						if (!receivers.contains(listC.get(i))){
+						if (!receivers.contains(listC.get(i))) {
 							receivers.add(listC.get(i));
 						}
 					}
