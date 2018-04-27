@@ -8,6 +8,11 @@ import java.util.Iterator;
 
 import resources.*;
 
+/**
+ * Class that handles the functionality in the server
+ * @author Oskar Engsström Magnusson
+ *
+ */
 public class ChatServer {
 	private ServerUI ui;
 	private ServerSocket serverSocket;
@@ -18,6 +23,13 @@ public class ChatServer {
 	private Thread connection;
 	private int requestPort;
 
+	/**
+	 * Constructor for creating the server
+	 * @param requestPort the port the server runs through 
+	 * @param nbrOfThreads number of threads in the thread-pool
+	 * @param listener the ClientListener 
+	 * @param ui the server ui
+	 */
 	public ChatServer(int requestPort, int nbrOfThreads, ClientListener listener, ServerUI ui) {
 		this.listener = listener;
 		this.unsentMessages = new UnsentMessages();
@@ -27,6 +39,9 @@ public class ChatServer {
 		this.ui = ui;
 	}
 
+	/**
+	 * Method for starting the server by creating a ServerSocket and a TCPListener
+	 */
 	protected void startServer() {
 		try {
 			serverSocket = new ServerSocket(requestPort);
@@ -40,6 +55,9 @@ public class ChatServer {
 		}
 	}
 
+	/**
+	 * Method for stopping the server
+	 */
 	protected void stopServer() {
 		try {
 			connection.interrupt();
@@ -52,6 +70,11 @@ public class ChatServer {
 		}
 	}
 
+	/**
+	 * Method that receives a message and sends it to all receivers. If the user is not online,
+	 * the message is added to "Unsent messages"
+	 * @param message a message object
+	 */
 	protected void respond(Message message) {
 		UserList list = message.getReceivers();
 		list.addUser(message.getSender());
@@ -72,12 +95,20 @@ public class ChatServer {
 		}
 	}
 
+	/**
+	 * Method that receives a UserList and sends it to all users in the list
+	 * @param listToSend a UserList 
+	 */
 	protected void respond(UserList listToSend) {
 		for (int i = 0; i < listToSend.numberOfUsers(); i++) {
 			clientHandlers.get(listToSend.getUser(i).getName()).send(listToSend);
 		}
 	}
 
+	/**
+	 * Method that returns a list of all users
+	 * @return list of all users 
+	 */
 	protected UserList getAllUsers() {
 		UserList allUsers = new UserList();
 		Iterator<String> iter = clientHandlers.keySet().iterator();
@@ -87,6 +118,11 @@ public class ChatServer {
 		return allUsers;
 	}
 
+	/**
+	 * Inner class which is listening for users to connect and adds a thread for each user
+	 * @author Oskar Engström Magnusson
+	 *
+	 */
 	private class TCPListener extends Thread {
 		public void run() {
 			while (!Thread.interrupted()) {
@@ -100,12 +136,21 @@ public class ChatServer {
 		}
 	}
 
+	/**
+	 * Inner class that handles the servers connection with the clients 
+	 * @author Oskar Engström Magnusson
+	 *
+	 */
 	private class ClientHandler implements Runnable {
 		private Socket socket;
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;
 		private User user;
 
+		/**
+		 * Constructs a ClientHandler and adds a OutputStream and an InputStream
+		 * @param socket the ServerSocket
+		 */
 		public ClientHandler(Socket socket) {
 			try {
 				this.socket = socket;
@@ -116,6 +161,10 @@ public class ChatServer {
 			}
 		}
 
+		/**
+		 * Method that receives a UserList and writes it to the OutputStream
+		 * @param users list of users
+		 */
 		public void send(UserList users) {
 			try {
 				System.out.println(users);
@@ -133,6 +182,10 @@ public class ChatServer {
 			}
 		}
 
+		/**
+		 * Method that receives a message and writes it to the OutputStream
+		 * @param message a message object
+		 */
 		public void send(Message message) {
 			try {
 				oos.writeObject(message);
@@ -141,6 +194,10 @@ public class ChatServer {
 			}
 		}
 
+		/**
+		 * Method for when a user is denied to login, writes a null object to the OutputStream 
+		 * and closes the socket
+		 */
 		public void denial() {
 			try {
 				oos.writeObject(null);
@@ -155,6 +212,10 @@ public class ChatServer {
 			}
 		}
 
+		/**
+		 * Method that reads an object from the InputStream and chooses what to do depending 
+		 * on which object it is
+		 */
 		public void run() {
 			while (!Thread.interrupted() && !socket.isClosed()) {
 				try {
