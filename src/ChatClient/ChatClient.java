@@ -9,7 +9,7 @@ import resources.*;
  * Class that opens a Socket to our Server and starts the ServerListener that
  * will recieve Messages and a User list.
  * 
- * @author Senor de la Cruz
+ * @author Martin Gyllstrom
  *
  */
 
@@ -73,7 +73,7 @@ public class ChatClient {
 	 * Inner class that creates a thread so the client recieves an Object from the
 	 * server. When an Object is recieved it will be sent to the UserList.
 	 * 
-	 * @author
+	 * @author Martin Gyllstrom
 	 *
 	 */
 

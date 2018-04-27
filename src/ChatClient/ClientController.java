@@ -15,9 +15,10 @@ import resources.UserList;
 /**
  * Class that creates a client for the program and controls it.
  * 
- * @author
+ * @author Martin Gyllstrom 
  *
  */
+
 public class ClientController {
 	private LoginUI loginUI;
 	private MessageUI messageUI;
@@ -48,12 +49,13 @@ public class ClientController {
 		loginUI = new LoginUI(this);
 		
 		showLoginUI();
-//		readContacts();
+
 	}
 
 	/**
 	 * Method that show the LogIn screen.
 	 */
+	
 	private void showLoginUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -69,6 +71,7 @@ public class ClientController {
 	/**
 	 * Method that show the Message screen.
 	 */
+	
 	private void showMessageUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -89,6 +92,7 @@ public class ClientController {
 	/**
 	 * Method that reads the UserList from the file.
 	 */
+	
 	public void readContacts() {
 		String fileName = generateFileName();
 		try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
@@ -103,6 +107,7 @@ public class ClientController {
 	/**
 	 * Method that writes the contacts to a file.
 	 */
+	
 	private void writeContacts() {
 		String fileName = generateFileName();
 		try (ObjectOutputStream oos = new ObjectOutputStream(
@@ -143,6 +148,7 @@ public class ClientController {
 	/**
 	 * Method that sends the message
 	 */
+	
 	protected void send() {
 		String text = messageUI.getText();
 		String iconPath = messageUI.getImagePath();
@@ -190,9 +196,10 @@ public class ClientController {
 	 * Inner class that implements a serverlistener that waits to recieve an
 	 * message.
 	 * 
-	 * @author
+	 * @author Martin Gyllstrom
 	 *
 	 */
+	
 	private class ServerResponse implements ServerListener {
 		public void receive(Message message) {
 			messageUI.addResponse(message);
@@ -200,11 +207,7 @@ public class ClientController {
 
 		public void receive(UserList userList) {
 			allUsers = userList;
-//			for (int i = 0; i < allUsers.numberOfUsers(); i++) {
-//				if (contacts.exist(allUsers.getUser(i).getName())) {
-////					allUsers.removeUser(allUsers.getUser(i));
-//				}
-//			}
+
 			if (allUsers.exist(user.getName())) {
 				allUsers.removeUser(user);
 			}
