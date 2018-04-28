@@ -7,22 +7,45 @@ import java.util.Calendar;
 
 import ChatServer.LogUI;
 
+/**
+ * Class that handles reading from Logfile
+ * 
+ * @author Mikael Lindfors
+ *
+ */
 public class LogReader {
 	private String filename;
 	private LogUI logUI;
 
+	/**
+	 * Constructor that receives filename and LogUI object
+	 * 
+	 * @param filename String filename of the logfile.
+	 * @param logUI LogUI object for displaying text in the LogUI's JTextArea
+	 */
 	public LogReader(String filename, LogUI logUI) {
 		this.filename = filename;
 		this.logUI = logUI;
-		
+
 	}
 
+	/**
+	 * Method that takes a String in format
+	 * fromYear:fromMonth:fromDay:fromHour:fromMinute:tillYear:tillMonth:tillDay:tillHour:tillMinute
+	 * and splits it to seperate parts and adds it to Calendarobjects that will be
+	 * compared to a timestamp (also added to a Calendarobject) from the logfile. If
+	 * the timestamp from Logfile is between timeFrom and timeTill, log-output will
+	 * be send to the LogUI's JTextArea.
+	 * 
+	 * @param logDate
+	 */
 	public synchronized void read(String logDate) {
 		Calendar timeFrom = Calendar.getInstance();
 		Calendar timeTill = Calendar.getInstance();
 		Calendar timeInLog = Calendar.getInstance();
 
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
 			int[] dateUI = logStringToInt(logDate.split(":"));
 			timeFrom.set(dateUI[0], dateUI[1], dateUI[2], dateUI[3], dateUI[4]);
 			timeTill.set(dateUI[5], dateUI[6], dateUI[7], dateUI[8], dateUI[9]);
@@ -35,12 +58,18 @@ public class LogReader {
 				}
 				line = reader.readLine();
 			}
-		} catch (
-		Exception e) {
+		} catch (Exception e) {
 			System.err.println(e);
 		}
 	}
 
+	/**
+	 * Method that fetch the timestamp from a String line (from the logfile).
+	 * 
+	 * @param line String with format (year-month-day hour:minute:second)
+	 * @return return a String array with year,month,day,hour,minute,second as
+	 *         separate parts.
+	 */
 	private String[] parseFromLog(String line) {
 		String[] parts = new String[5];
 		parts[0] = line.substring(1, 5);
@@ -52,10 +81,13 @@ public class LogReader {
 	}
 
 	/**
-	 * Method that takes format:
-	 * fromYear:fromMonth:fromDay:fromHour:fromMinute:tillYear:tillMonth:tillDay:tillHour:tillMinute
-	 * and convert every slot to int and store it in an int array.
-	 * @param logDate String with format: fromYear:fromMonth:fromDay:fromHour:fromMinute:tillYear:tillMonth:tillDay:tillHour:tillMinute
+	 * Method that takes a String array with both fromTime and tillTime and converts
+	 * it to an int-array.
+	 * 
+	 * @param logDate String array with format [0] = fromYear, [1] = fromMonth, [2]
+	 *            = fromDay, [3] = fromHour, [4] = fromMinute, [5] = tillYear, [6] =
+	 *            tillMonth, [7] = tillDay, [8] = tillHour, [9] = tillMinute.
+	 * 
 	 */
 	public int[] logStringToInt(String[] logDate) {
 		int[] parts = new int[logDate.length];
@@ -65,4 +97,3 @@ public class LogReader {
 		return parts;
 	}
 }
-
