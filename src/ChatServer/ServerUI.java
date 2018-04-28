@@ -122,7 +122,8 @@ public class ServerUI extends JPanel {
 			}
 		});
 		LogReader logReader = new LogReader(fileName, logUI);
-		logReader.read(startTime + ":" + endTime);
+		String logTime = (startTime + ":"+ endTime);
+		logReader.read(logTime);
 	}
 
 	/**
