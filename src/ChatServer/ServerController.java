@@ -60,7 +60,6 @@ public class ServerController {
 		 * Method that receives a message from a client
 		 */
 		public void receive(Message message) {
-			ui.println(message);
 			chatServer.respond(message);
 		}
 

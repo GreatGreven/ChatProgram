@@ -167,7 +167,6 @@ public class ChatServer {
 		 */
 		public void send(UserList users) {
 			try {
-				System.out.println(users);
 				oos.writeObject(users);
 				oos.reset();
 				oos.flush();
@@ -188,6 +187,8 @@ public class ChatServer {
 		 */
 		public void send(Message message) {
 			try {
+				message.setReceivedDate();
+				ui.println(message);
 				oos.writeObject(message);
 				oos.flush();
 			} catch (IOException e) {
@@ -234,6 +235,7 @@ public class ChatServer {
 						}
 					} else if (request instanceof Message) {
 						Message message = (Message) request;
+						message.setDeliveredDate();
 						// pool.execute(this);
 						listener.receive(message);
 					}

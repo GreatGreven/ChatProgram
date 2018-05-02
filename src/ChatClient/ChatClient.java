@@ -82,7 +82,6 @@ public class ChatClient {
 			while (!socket.isClosed()) {
 				try {
 					Object response = ois.readObject();
-					System.out.println(response);
 					if (response instanceof UserList) {
 						UserList list = (UserList) response;
 						listener.receive(list);
