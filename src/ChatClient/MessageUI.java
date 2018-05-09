@@ -205,6 +205,7 @@ public class MessageUI extends JPanel {
 	 */
 	protected void populateOnlineList() {
 		UserList list = controller.getAllUsers();
+		modelOnlineList.clear();
 		for (int i = 0; i < list.numberOfUsers(); i++) {
 			if (!modelOnlineList.contains(list.getUser(i).getName())) {
 				modelOnlineList.addElement(list.getUser(i).getName());
