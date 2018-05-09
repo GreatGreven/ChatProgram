@@ -79,6 +79,8 @@ public class ServerController {
 		 */
 		public void disconnectedUser(User user) {
 			user.setConnected(false);
+			UserList allUsers = chatServer.getAllUsers();
+			chatServer.respond(allUsers);
 		}
 	}
 }
