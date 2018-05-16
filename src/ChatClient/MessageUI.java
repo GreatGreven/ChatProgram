@@ -134,7 +134,6 @@ public class MessageUI extends JPanel {
 		JLabel lblOnline = new JLabel("Online");
 		pnlOnline.add(lblOnline, BorderLayout.NORTH);
 		lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
-		// 2 NYA RADER
 		listOnline = new JList<>(modelOnlineList);
 		populateOnlineList();
 		listOnline.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

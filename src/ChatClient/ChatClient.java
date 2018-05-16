@@ -92,8 +92,7 @@ public class ChatClient {
 						listener.accessDenied();
 					}
 				} catch (ClassNotFoundException | IOException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, "TCPLISTENER interrupted" + e.getMessage());
+					JOptionPane.showMessageDialog(null, "Connection to server interrupted \n" + e.getMessage());
 					try {
 						socket.close();
 					} catch (IOException e1) {

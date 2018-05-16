@@ -47,7 +47,7 @@ public class ClientController {
 		contacts = new UserList();
 		allUsers = new UserList();
 		loginUI = new LoginUI(this);
-		
+		readContacts();
 		showLoginUI();
 
 	}
@@ -207,21 +207,24 @@ public class ClientController {
 
 		public void receive(UserList userList) {
 			allUsers = userList;
-
+			
 			if (allUsers.exist(user.getName())) {
 				allUsers.removeUser(user);
 			}
-			if (user.isConnected()) {
-				messageUI.populateOnlineList();
-				messageUI.revalidate();
-				messageUI.repaint();
-
-			} else {
+			if (!user.isConnected()) {
 				user.setConnected(true);
 				messageUI = new MessageUI(ClientController.this);
 				UI.dispose();
 				showMessageUI();
 			}
+			for (int i = 0 ; i < allUsers.numberOfUsers(); i++){
+				if (contacts.exist(allUsers.getUser(i).getName())){
+					allUsers.removeUser(allUsers.getUser(i));
+				}
+			}
+			messageUI.populateOnlineList();
+			messageUI.revalidate();
+			messageUI.repaint();
 		}
 
 		public void accessDenied() {
