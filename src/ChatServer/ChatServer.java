@@ -10,6 +10,7 @@ import resources.*;
 
 /**
  * Class that handles the functionality in the server
+ * 
  * @author Oskar Engsström Magnusson
  *
  */
@@ -25,10 +26,15 @@ public class ChatServer {
 
 	/**
 	 * Constructor for creating the server
-	 * @param requestPort the port the server runs through 
-	 * @param nbrOfThreads number of threads in the thread-pool
-	 * @param listener the ClientListener 
-	 * @param ui the server ui
+	 * 
+	 * @param requestPort
+	 *            the port the server runs through
+	 * @param nbrOfThreads
+	 *            number of threads in the thread-pool
+	 * @param listener
+	 *            the ClientListener
+	 * @param ui
+	 *            the server ui
 	 */
 	public ChatServer(int requestPort, int nbrOfThreads, ClientListener listener, ServerUI ui) {
 		this.listener = listener;
@@ -40,7 +46,8 @@ public class ChatServer {
 	}
 
 	/**
-	 * Method for starting the server by creating a ServerSocket and a TCPListener
+	 * Method for starting the server by creating a ServerSocket and a
+	 * TCPListener
 	 */
 	protected void startServer() {
 		try {
@@ -63,7 +70,9 @@ public class ChatServer {
 			connection.interrupt();
 			serverSocket.close();
 			pool.stop();
-			clientHandlers.clear();
+			for (ClientHandler c : clientHandlers.values()){
+				c.closeSocket();;
+			}
 			ui.println("Server closing");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -71,15 +80,17 @@ public class ChatServer {
 	}
 
 	/**
-	 * Method that receives a message and sends it to all receivers. If the user is not online,
-	 * the message is added to "Unsent messages"
-	 * @param message a message object
+	 * Method that receives a message and sends it to all receivers. If the user
+	 * is not online, the message is added to "Unsent messages"
+	 * 
+	 * @param message
+	 *            a message object
 	 */
 	protected void respond(Message message) {
 		UserList list = message.getReceivers();
 		list.addUser(message.getSender());
 		for (int i = 0; i < list.numberOfUsers(); i++) {
-			if(clientHandlers.containsKey(list.getUser(i).getName())){
+			if (clientHandlers.containsKey(list.getUser(i).getName())) {
 				clientHandlers.get(list.getUser(i).getName()).send(message);
 			} else {
 				if (unsentMessages.contains(list.getUser(i).getName())) {
@@ -97,7 +108,9 @@ public class ChatServer {
 
 	/**
 	 * Method that receives a UserList and sends it to all users in the list
-	 * @param listToSend a UserList 
+	 * 
+	 * @param listToSend
+	 *            a UserList
 	 */
 	protected void respond(UserList listToSend) {
 		for (int i = 0; i < listToSend.numberOfUsers(); i++) {
@@ -107,7 +120,8 @@ public class ChatServer {
 
 	/**
 	 * Method that returns a list of all users
-	 * @return list of all users 
+	 * 
+	 * @return list of all users
 	 */
 	protected UserList getAllUsers() {
 		UserList allUsers = new UserList();
@@ -119,7 +133,9 @@ public class ChatServer {
 	}
 
 	/**
-	 * Inner class which is listening for users to connect and adds a thread for each user
+	 * Inner class which is listening for users to connect and adds a thread for
+	 * each user
+	 * 
 	 * @author Oskar Engström Magnusson
 	 *
 	 */
@@ -137,7 +153,8 @@ public class ChatServer {
 	}
 
 	/**
-	 * Inner class that handles the servers connection with the clients 
+	 * Inner class that handles the servers connection with the clients
+	 * 
 	 * @author Oskar Engström Magnusson
 	 *
 	 */
@@ -149,7 +166,9 @@ public class ChatServer {
 
 		/**
 		 * Constructs a ClientHandler and adds a OutputStream and an InputStream
-		 * @param socket the ServerSocket
+		 * 
+		 * @param socket
+		 *            the ServerSocket
 		 */
 		public ClientHandler(Socket socket) {
 			try {
@@ -163,7 +182,9 @@ public class ChatServer {
 
 		/**
 		 * Method that receives a UserList and writes it to the OutputStream
-		 * @param users list of users
+		 * 
+		 * @param users
+		 *            list of users
 		 */
 		public void send(UserList users) {
 			try {
@@ -183,7 +204,9 @@ public class ChatServer {
 
 		/**
 		 * Method that receives a message and writes it to the OutputStream
-		 * @param message a message object
+		 * 
+		 * @param message
+		 *            a message object
 		 */
 		public void send(Message message) {
 			try {
@@ -196,8 +219,8 @@ public class ChatServer {
 		}
 
 		/**
-		 * Method for when a user is denied to login, writes a null object to the OutputStream 
-		 * and closes the socket
+		 * Method for when a user is denied to login, writes a null object to
+		 * the OutputStream and closes the socket
 		 */
 		public void denial() {
 			try {
@@ -214,52 +237,47 @@ public class ChatServer {
 		}
 
 		/**
-		 * Method that reads an object from the InputStream and chooses what to do depending 
-		 * on which object it is
+		 * Method that reads an object from the InputStream and chooses what to
+		 * do depending on which object it is
 		 */
 		public void run() {
-			while (!Thread.interrupted() && !socket.isClosed()) {
+			try {
+				Object request = ois.readObject();
+				if (request instanceof User) {
+					User user = (User) request;
+					if (clientHandlers.containsKey(user.getName())) {
+						denial();
+					} else {
+						this.user = user;
+						this.user.setConnected(true);
+						ui.println(this.user.getName() + " has connected (" + toString() + ")");
+						clientHandlers.put(this.user.getName(), this);
+						pool.execute(this);
+						listener.receive(this.user);
+					}
+				} else if (request instanceof Message) {
+					Message message = (Message) request;
+					message.setDeliveredDate();
+					pool.execute(this);
+					listener.receive(message);
+				}
+			} catch (Exception e) {
 				try {
-					Object request = ois.readObject();
-					if (request instanceof User) {
-						User user = (User) request;
-						if (clientHandlers.containsKey(user.getName())) {
-							denial();
-						} else {
-							this.user = user;
-							this.user.setConnected(true);
-							ui.println(this.user.getName() + " has connected (" + toString() + ")");
-							clientHandlers.put(this.user.getName(), this);
-							// pool.execute(this);
-							listener.receive(this.user);
-						}
-					} else if (request instanceof Message) {
-						Message message = (Message) request;
-						message.setDeliveredDate();
-						// pool.execute(this);
-						listener.receive(message);
-					}
-				} catch (SocketException e) {
-					ui.println(user + " has disconnected (" + toString() + ")");
-					clientHandlers.remove(user);
-					listener.disconnectedUser(user);
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				} catch (Exception e) {
-					try {
-						ui.println(user + " has disconnected (" + toString() + ")");
-						socket.close();
-						clientHandlers.remove(user);
-						listener.disconnectedUser(user);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					disconnect();
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 			}
+		}
+		
+		public void disconnect() throws IOException{
+			ui.println(user + " has disconnected (" + toString() + ")");
+			clientHandlers.remove(user);
+			listener.disconnectedUser(user);
+		}
+		
+		public void closeSocket() throws IOException{
+			socket.close();
 		}
 
 		public String toString() {

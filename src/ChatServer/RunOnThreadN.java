@@ -42,7 +42,6 @@ public class RunOnThreadN {
 							try {
 								runnable = tasks.get();
 								runnable.run();
-								execute(runnable);
 							} catch (InterruptedException e) {
 								try {
 									join();
