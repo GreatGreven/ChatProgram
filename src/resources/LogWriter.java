@@ -18,7 +18,6 @@ public class LogWriter {
 	 * Constructor that fetch an instance from Calendar.
 	 */
 	private LogWriter() {
-		c = Calendar.getInstance();
 	}
 
 	/**
@@ -46,6 +45,7 @@ public class LogWriter {
 	 * 
 	 */ 
 	private String getTime() {
+		c = Calendar.getInstance();
 		year = c.get(Calendar.YEAR);
 		month = c.get(Calendar.MONTH) + 1;
 		day = c.get(Calendar.DATE);
