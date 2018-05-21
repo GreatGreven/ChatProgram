@@ -173,6 +173,7 @@ public class ChatServer {
 		public ClientHandler(Socket socket) {
 			try {
 				this.socket = socket;
+				this.socket.setSoTimeout(1000);
 				oos = new ObjectOutputStream(socket.getOutputStream());
 				ois = new ObjectInputStream(socket.getInputStream());
 			} catch (IOException e) {
@@ -261,6 +262,8 @@ public class ChatServer {
 					pool.execute(this);
 					listener.receive(message);
 				}
+			} catch (SocketTimeoutException e){
+				pool.execute(this);
 			} catch (Exception e) {
 				try {
 					disconnect();
